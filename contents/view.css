@@ -32,5 +32,13 @@
 
 #bestReplyDiv {
 	margin-bottom: 20px;
-	border: 5px solid red;
+	border: 4px solid #20BC00;
+}
+
+.whole_box.blocked {
+	background-color: #214045;
+}
+
+.whole_box {
+	background-color: #4D6C77;
 }

@@ -253,7 +253,7 @@ function writeUsermemos()
 	});
 }
 
-// 차단
+// 차단 
 
 function isBlockedUser(blockedUsers, usernum, ip)
 {
@@ -355,7 +355,8 @@ function showWriterIsBlocked(blockedUsers)
 	writerNum = $(".writerInfoContents > div > button").attr("usernum");
 
 	if (isBlockedUser(blockedUsers, writerNum, writerIP)) {
-		$(".whole_box").attr("style", "width:100%;margin:0;padding:0;text-align:center;background-color:#FF4444;")
+		$(".whole_box").attr("style", "width:100%;margin:0;padding:0;text-align:center;");
+		$(".whole_box").addClass("blocked");
 	}
 }
 
@@ -390,7 +391,7 @@ function showReplyBlockedUsers(blockedUsers)
 		var usernum = $(this).parent().children("button").attr("usernum");
 
 		if (isBlockedUser(blockedUsers, usernum, ip)) {
-		    $(this).parent().parent().css("background-color", "#FF8888");
+		    $(this).parent().parent().css("background-color", "#B3B2B2");
 		}
 	});
 }
