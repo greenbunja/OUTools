@@ -1,0 +1,48 @@
+h2 {
+	font-size: 90;
+}
+
+table {
+	text-align: center;
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+td, th {
+	padding: 5px;
+	border: 1px solid black;
+}
+
+a {
+	text-decoration: none;
+}
+
+#saveMemo, #saveBlocked, #saveJjalNumber {
+	float: right;
+}
+
+.confDiv {
+	float: left;
+	clear: left;
+}
+
+footer {
+	font-size: 90%;
+	float: right;
+	clear: both;
+}
+
+.jjal {
+	height:100px;
+	max-width: 300px;
+	width:auto;
+}
+
+#addJjal {
+	font-size: 180%;
+	float: right;
+}
+
+#JjalsOptions {
+	text-decoration: underline;
+}

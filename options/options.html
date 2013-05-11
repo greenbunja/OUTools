@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OU Tools 옵션</title>
+	<meta charset="utf8">
+	<link rel="stylesheet" type="text/css" href="options.css">
+    <script src="/analytics.js"></script>
+	<script src="/jquery.js"></script>
+	<script src="options_funcs.js"></script>
+</head>
+<body>
+	<h1>OU Tools 옵션</h1>
+
+	<div id="MemosDiv" class="confDiv">
+		<h2>회원메모 관리</h2>
+		<form action="#" id="editMemos">
+			<div id="MemosTableDiv"></div>
+		</form>
+	</div>
+
+	<div id="BlockedUsersDiv" class="confDiv">
+		<h2>차단된 회원 관리</h2>
+		<a href="javascript:;" id="addBlockedUser">차단회원 추가하기</a>
+		<form action="#" id="editBlocked">
+			<div id="BlockedUsersTableDiv"></div>
+		</form>
+	</div>
+
+	<div id="SavedTextsDiv" class="confDiv">
+		<h2>임시저장된 글</h2>
+		<div id="SavedTextsTableDiv"></div>
+	</div>
+
+	<div id="JjalsDiv" class="confDiv">
+		<a id="JjalsOptions" href="JjalsOptions.html"><h2>자주쓰는 짤 관리</h2></a>
+	</div>
+
+	<div class="confDiv">
+		<h2>기타 설정</h2>
+		<label for="interval">자동저장 간격 (분단위, 0으로 설정시 자동저장 안함)</label>
+		<form action="#" id="editAutosaveInterval" class="">
+			<input type="number" id="interval" name="interval" min="0" max="60">
+			<input type="submit">
+		</form>
+	</div>
+
+	<footer>
+		<p>개발자 메일: ekkuym@gmail.com<br>
+		   버그, 피드백, 원하는기능등 메일로 보내주시면 감사하겠습니다.</p>
+		<a href="/donate.html">개발자에게 기부하기</a>
+	</footer>
+	<script src="options.js"></script>
+</body>
+</html>

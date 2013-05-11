@@ -1,0 +1,1 @@
+  $("#lottery").click(sendLotteryMessage);
