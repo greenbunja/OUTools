@@ -37,10 +37,12 @@
 
 	<div class="confDiv">
 		<h2>기타 설정</h2>
-		<label for="interval">자동저장 간격 (분단위, 0으로 설정시 자동저장 안함)</label>
-		<form action="#" id="editAutosaveInterval" class="">
+		<form action="#" id="editOptions" class="confDiv">
+			<input type="checkbox" id="showBestReply">
+			<label for="showBestReply">베스트리플 보기</label><br><br>
 			<input type="number" id="interval" name="interval" min="0" max="60">
-			<input type="submit">
+			<label for="interval">자동저장 간격 (분단위, 0으로 설정시 자동저장 안함)</label><br><br>
+			<input type="submit" class="saveOptionsButton" value="저장하기"><br>
 		</form>
 	</div>
 

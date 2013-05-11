@@ -17,8 +17,9 @@ a {
 	text-decoration: none;
 }
 
-#saveMemo, #saveBlocked, #saveJjalNumber {
+#saveJjalNumber, .saveOptionsButton {
 	float: right;
+	clear: both;
 }
 
 .confDiv {

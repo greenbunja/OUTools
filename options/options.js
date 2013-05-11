@@ -1,7 +1,7 @@
 $("#editMemos").submit(saveMemo);
 $("#editBlocked").submit(saveBlocked);
-$("#editAutosaveInterval").submit(saveAutosaveInterval)
-getInterval();
+$("#editOptions").submit(saveOptions)
+showOptions();
 showUsermemosTable();
 showBlockedUsersTable();
 ShowSavedTextsTable();

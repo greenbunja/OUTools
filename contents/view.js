@@ -26,6 +26,19 @@ function initPage()
 		showBlockedUsers(blockedUsers);
 	});
 	$("center > input").click(clickedTotalOKButton);
+
+	chrome.storage.local.get("showBestReply", function(items) {
+		var isShowBestReplyOn = items.showBestReply;
+
+		if (isShowBestReplyOn === undefined) {
+		    chrome.storage.local.set({"showBestReply": true});
+		    isShowBestReplyOn = true;
+		}
+
+		if (isShowBestReplyOn) {
+		    showBestReply();
+		}
+	}) ;
 }
 
 function wrapOKText()
@@ -151,8 +164,6 @@ function addOKListButtons(blockedUsers)
 	});
 }
 
-// 회원메모
-
 function clickedTotalOKButton()
 {
 	chrome.storage.local.get(["usermemos", "blockedUsers"], function(items) {
@@ -168,13 +179,15 @@ function clickedTotalOKButton()
 			return;
 		}
 
-		showOKListUsermemo(usermemos);
+		showOKListUsermemos(usermemos);
 		showOKListBlockedUsers(blockedUsers);
 		addOKListButtons(blockedUsers);
 	});
 }
 
-function showOKListUsermemo(usermemos)
+// 회원메모
+
+function showOKListUsermemos(usermemos)
 {
 	$("#ok_layer > a").each(function() {
 		var usernum = $(this).text();
@@ -211,7 +224,7 @@ function showUsermemos(usermemos)
 		}
 	});
 
-	showOKListUsermemo(usermemos);
+	showOKListUsermemos(usermemos);
 }
 
 function writeUsermemos()
@@ -444,9 +457,51 @@ function reciveMessage(message, sender, sendResponse)
 	}
 }
 
+// 베플
 
-// 짤선택
+function showBestReply()
+{
+	var bestReply, secondReply;
+	var maxOK = 0, secondOK = 0;
+	$('.memoInfoDiv').each(function(index) {
+		var okAndNokDiv = $(this).children('font[color="red"]');
 
+		var html = okAndNokDiv.html();
+		var okAndNokString = html.split(' / ');
+		var okCount = parseInt(okAndNokString[0].split(':')[1]);
+		var nokCount = parseInt(okAndNokString[1].split(':')[1]);
+		
+		if ((okCount >= 10) && (okCount/3 >= nokCount)) {
+			if (okCount > secondOK) {
+				if (okCount > maxOK) {
+				    secondReply = bestReply;
+				    bestReply = index;
+				    secondOK = maxOK;
+				    maxOK = okCount;
+				} else {
+					secondReply = index;
+					secondOK = okCount;
+				}
+			}
+		}
+	});
+
+	if (bestReply !== undefined) {
+		var bestReplysDiv = $("<div></div>")
+						   .attr("id", "bestReplyDiv")
+						   .insertBefore($(".memoContainerDiv:first"));
+
+		var firstReplyDiv = $('.memoContainerDiv:eq(' + bestReply + ')').clone(true, true);
+		bestReplysDiv.append(firstReplyDiv);
+
+		if (secondReply !== undefined) {
+			var secondReplyHtml = $('.memoContainerDiv:eq(' + (secondReply+1) + ')').clone(true, true);
+			bestReplysDiv.append(secondReplyHtml);	    
+		}
+	}	
+}
+
+// 짤
 function addJjal(event)
 {
 	var jjalURL = event.data.jjalURL;

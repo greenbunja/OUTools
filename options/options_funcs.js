@@ -47,7 +47,7 @@ function showUsermemosTable()
 						.click(deleteMemo);
 		}
 
-		$("#editMemos").append('<input type="submit" id="saveMemo" value="변경 저장">');
+		$("#editMemos").append('<input type="submit" id="saveMemo" class="saveOptionsButton" value="변경 저장">');
 	});
 }
 
@@ -152,7 +152,7 @@ function showBlockedUsersTable()
 						.click(disableBlocked);
 		}
 
-		$("#editBlocked").append('<input type="submit" id="saveBlocked" value="변경 저장">');
+		$("#editBlocked").append('<input type="submit" id="saveBlocked" class="saveOptionsButton" value="변경 저장">');
 	});
 }
 
@@ -326,10 +326,11 @@ function saveBlocked()
 	});
 }
 
-function saveAutosaveInterval()
+function saveOptions()
 {
-	interval = this.interval.value;
-	chrome.storage.local.set({"AutosaveInterval": interval});
+	var interval = this.interval.value;
+	var showBestReply = this.showBestReply.checked;
+	chrome.storage.local.set({"AutosaveInterval": interval, "showBestReply": showBestReply});
 	alert("저장 되었습니다.");
 }
 
@@ -421,16 +422,22 @@ function openSavedTextWindow()
 	.appendTo(showTextWindow.document.body);
 }
 
-function getInterval()
+function showOptions()
 {
-	chrome.storage.local.get("AutosaveInterval", function(items) {
+	chrome.storage.local.get(["AutosaveInterval", "showBestReply"], function(items) {
 		var interval = items.AutosaveInterval;
-
-		if (interval == undefined) {
+		if (interval === undefined) {
 		    chrome.storage.local.set({"AutosaveInterval": 3});
 		    interval = 3;
 		}
 
+		var showBestReply = items.showBestReply;
+		if (showBestReply === undefined) {
+		    chrome.storage.local.set({"showBestReply": true});
+		    showBestReply = true;
+		}
+
+		$("#showBestReply").attr("checked", showBestReply);
 		$("#interval").val(items.AutosaveInterval);
 	});
 }
