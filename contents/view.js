@@ -455,6 +455,8 @@ function reciveMessage(message, sender, sendResponse)
 {
 	if (message.text == "lottery") {
 		lottery();
+	} else if (message.text == "offBGMs") {
+		offBGMs();
 	}
 }
 
@@ -602,5 +604,45 @@ function resetJjals()
 	chrome.storage.local.set({"jjals": jjals});
 }
 
+function offBGMs()
+{
+	(function() {
+		function R(w) {
+			try {
+				var d=w.document,j,i,t,T,N,b,r=1,C;
+				for(j=0;t=["object","embed","applet","iframe"][j];++j) {
+					T=d.getElementsByTagName(t);
+
+					for(i=T.length-1;(i+1)&&(N=T[i]);--i) {
+
+						if (T[i].id == "ZeroClipboardMovie_1") {
+						    continue;
+						}
+
+						if(j!=3||!R((C=N.contentWindow)?C:N.contentDocument.defaultView)) {
+							b=d.createElement("div");
+							b.style.width=N.width;
+							b.style.height=N.height;b.innerHTML="<del>"+(j==3?"third-party "+t:t)+"</del>";
+							N.parentNode.replaceChild(b,N);
+						}
+					}
+				}
+			}catch(E) {
+				r=0;
+			}
+			return r
+		}
+		R(self);
+		var i,x;
+		for(i=0;x=frames[i];++i)
+			R(x);
+	})();
+}
+
 initPage();
+chrome.storage.local.get("offBGMs", function(items) {
+	if (items.offBGMs == true) {
+		offBGMs();	    
+	}
+});
 chrome.runtime.onMessage.addListener(reciveMessage);

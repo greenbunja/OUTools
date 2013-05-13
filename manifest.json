@@ -3,7 +3,7 @@
 
     "name": "OU Tools",
     "description": "베스트리플, 짤 선택, 글 임시저장, 당첨자 뽑기, 회원메모, IP 차단등",
-    "version": "1.5.7",
+    "version": "1.6.1",
 
     "icons": {
         "16": "images/icon16.png",
