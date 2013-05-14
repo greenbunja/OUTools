@@ -10,10 +10,35 @@ function initPage()
 	.appendTo($("#memo_insert_submit_image").parent().next());
 
 	wrapOKText();
-	chrome.storage.local.get(["usermemos", "blockedUsers"], function(items) {
+
+	chrome.storage.local.get(["blockEnable", "memoEnable", "usermemos", "blockedUsers"], function(items) {
+		var blockEnable = items.blockEnable;
+		if (blockEnable == undefined) {
+			chrome.storage.local.set({"blockEnable": true});
+		    blockEnable = true;
+		}
+
+		var memoEnable = items.memoEnable;
+		if (memoEnable == undefined) {
+			chrome.storage.local.set({"memoEnable": true});
+		    memoEnable = true;
+		}
+
+		if (!blockEnable && !memoEnable) {
+		    return;
+		}
+
+		addButtonsDivs();
+		$("center > input").click(clickedTotalOKButton);
+
 		var usermemos = items.usermemos;
 		if (usermemos == undefined) {
 		    usermemos = {};
+		}
+
+		if (memoEnable) {
+			addMemoButtons();
+			showUsermemos(usermemos);					    
 		}
 
 		var blockedUsers = items.blockedUsers;
@@ -21,21 +46,21 @@ function initPage()
 		    blockedUsers = [];
 		}
 
-		addButtons(blockedUsers);
-		showUsermemos(usermemos);
-		showBlockedUsers(blockedUsers);
+		if (blockEnable) {
+			addBlockButtons(blockedUsers);
+			showBlockedUsers(blockedUsers);
+		}
 	});
-	$("center > input").click(clickedTotalOKButton);
 
-	chrome.storage.local.get("showBestReply", function(items) {
-		var isShowBestReplyOn = items.showBestReply;
+	chrome.storage.local.get("bestReplyEnable", function(items) {
+		var bestReplyEnable = items.bestReplyEnable;
 
-		if (isShowBestReplyOn === undefined) {
-		    chrome.storage.local.set({"showBestReply": true});
-		    isShowBestReplyOn = true;
+		if (bestReplyEnable == undefined) {
+		    chrome.storage.local.set({"bestReplyEnable": false});
+		    bestReplyEnable = false;
 		}
 
-		if (isShowBestReplyOn) {
+		if (bestReplyEnable) {
 		    showBestReply();
 		}
 	}) ;
@@ -49,75 +74,11 @@ function wrapOKText()
 	.wrap('<span class="okSpan"></span>');
 }
 
-function addTwoButtons(parent, username, usernum, userpage, ip, isBlocked)
-{
-	$("<button></button>")
-	.attr("username", username)
-	.attr("usernum", usernum)
-	.attr("userpage", userpage)
-	.text("회원메모")
-	.click(writeUsermemos)
-	.appendTo(parent);
-
-	if (isBlocked) {
-		$("<button></button>")
-		.attr("username", username)
-		.attr("usernum", usernum)
-		.attr("userpage", userpage)
-		.attr("ip", ip)
-		.text("IP 차단 헤제")
-		.click(disableBlockedUser)
-		.appendTo(parent);
-	} else {
-		$("<button></button>")
-		.attr("username", username)
-		.attr("usernum", usernum)
-		.attr("userpage", userpage)
-		.attr("ip", ip)
-		.text("IP 차단")
-		.click(blockUser)
-		.appendTo(parent);
-	}
-}
-
-function addButtons(blockedUsers)
-{
-	var writerDiv = $(".writerInfoContents");
-
-	var writerName = writerDiv.find("div > a > font > b").text();
-
-	if (writerName != "") {
-		var writerNumber = writerDiv.find("div > a").attr("href").slice(24);				// 회원번호만 남기고 지움
-		var writerPage = "http://todayhumor.co.kr/board/list.php?kind=member&mn=" + writerNumber;
-
-		var writerIp = writerDiv.children(":eq(5)").html();
-		writerIp = writerIp.slice(5);
-
-		var writerIsBlocked = isBlockedUser(blockedUsers, writerNumber, writerIp);
-		addTwoButtons(writerDiv.children(":eq(1)"), writerName, writerNumber, writerPage, writerIp, writerIsBlocked);
-	}
-
-	$(".memoInfoDiv").each(function() {
-		var username = $(this).find("a > font > b").text();
-
-		if (username != "") {
-    		var usernum = $(this).children("a").attr("href").slice(15);
-			var userpage = "http://todayhumor.co.kr/board/list.php?kind=member&mn=" + usernum
-
-			var ip = $(this).children("font[color='red']:last").text();
-			ip = ip.slice(3);
-
-			var isBlocked = isBlockedUser(blockedUsers, usernum, ip);
-			addTwoButtons($(this), username, usernum, userpage, ip, isBlocked);
-		}
-	});
-
-	addOKListButtons(blockedUsers);
-}
-
-function addOKListButtons(blockedUsers)
+function addOKListButtonsDivs()
 {
 	$("#ok_layer > span.okSpan").each(function() {
+		var $this = $(this);
+
 		var text = $(this).text();
 		if ($.trim(text) == "") {
 			return;
@@ -128,45 +89,138 @@ function addOKListButtons(blockedUsers)
 		var ip = $.trim(words[words.length - 3]);
 		var username = $.trim(words[words.length - 2]);
 		var usernum = $(this).nextAll("a:first").text();
-		var userpage = "http://todayhumor.co.kr/board/list.php?kind=member&mn=" + usernum;
 
 		if (username == "") {
 		    usernum = "";
 		}
 
-		var isBlocked = isBlockedUser(blockedUsers, usernum, ip);
+		var buttonsSpan = $('<span></span>')
+						  .addClass("buttonsSpan")
+	  					  .attr("username", username)
+						  .attr("usernum", usernum)
+						  .attr("ip", ip);
 
 		if (ip != "" && username == "") {
-			if (isBlocked) {
-    			$("<button></button>")
-				.attr("username", "")
-				.attr("usernum", "")
-				.attr("userpage", "")
-				.attr("ip", ip)
-				.text("IP 차단 헤제")
-				.click(disableBlockedUser)
-				.insertAfter($(this)); 
-			} else {
-				$("<button></button>")
-				.attr("username", "")
-				.attr("usernum", "")
-				.attr("userpage", "")
-				.attr("ip", ip)
-				.text("IP 차단")
-				.click(blockUser)
-				.insertAfter($(this));
-			}
+			buttonsSpan.insertAfter($this);
+		} else {
+			buttonsSpan.insertAfter($(this).nextAll("a:first"));
+		}
+	});
+}
 
-			return;
+function addButtonsDivs()
+{
+	var writerDiv = $(".writerInfoContents");
+
+	var writerName = writerDiv.find("div > a > font > b").text();
+
+	if (writerName != "") {
+		var writerNumber = writerDiv.find("div > a").attr("href").slice(24);
+
+		var writerIp = writerDiv.children(":eq(5)").html();
+		writerIp = writerIp.slice(5);
+
+		var buttonsSpan = $('<span></span>')
+						  .addClass("buttonsSpan")
+				  		  .attr("username", writerName)
+						  .attr("usernum", writerNumber)
+						  .attr("ip", writerIp)
+						  .appendTo(writerDiv.children(":eq(1)"));
+	}
+
+	$(".memoInfoDiv").each(function() {
+		var $this = $(this);
+
+		var username = $this.find("a > font > b").text();
+
+		if (username != "") {
+    		var usernum = $this.children("a").attr("href").slice(15);
+
+			var ip = $this.children("font[color='red']:last").text();
+			ip = ip.slice(3);
+
+			var buttonsSpan = $('<span></span>')
+							  .addClass("buttonsSpan")
+		  					  .attr("username", username)
+							  .attr("usernum", usernum)
+							  .attr("ip", ip)
+							  .appendTo($this);
+		}
+	});
+
+	addOKListButtonsDivs();
+}
+
+function addBlockButton(parent, isBlocked)
+{
+	if (isBlocked) {
+		$("<button></button>")
+		.attr("class", "blockButton")
+		.text("IP 차단 헤제")
+		.click(disableBlockedUser)
+		.appendTo(parent);
+	} else {
+		$("<button></button>")
+		.attr("class", "blockButton")
+		.text("IP 차단")
+		.click(blockUser)
+		.appendTo(parent);
+	}
+}
+
+function addMemoButton(parent)
+{
+	$("<button></button>")
+	.attr("class", "memoButton")
+	.text("회원메모")
+	.click(writeUsermemos)
+	.appendTo(parent);
+}
+
+function addMemoButtons()
+{
+	$('.buttonsSpan').each(function() {
+		var $this = $(this);
+
+		if ($this.children(".memoButton").length != 0) {
+		    return;
 		}
 
-		addTwoButtons($("<span></span>").insertAfter($(this).nextAll("a:first")), username, usernum, userpage, ip, isBlocked);
+		var username = $this.attr("username");
+
+		if (username != "") {
+			addMemoButton($this);
+		}
+	});
+}
+
+function addBlockButtons(blockedUsers)
+{
+	$('.buttonsSpan').each(function() {
+		var $this = $(this);
+
+		if ($this.children(".blockButton").length != 0) {
+		    return;
+		}
+
+		var username = $this.attr("username");
+		var usernum = $this.attr("usernum");
+		var ip = $this.attr("ip");
+		ip = ip.slice(3);
+
+		if (username != "") {
+			var isBlocked = isBlockedUser(blockedUsers, usernum, ip);
+			addBlockButton($this, isBlocked);
+		} else if (username == "" && ip != "") {
+			var isBlocked = isBlockedUser(blockedUsers, "", ip);
+			addBlockButton($this, isBlocked);
+		}
 	});
 }
 
 function clickedTotalOKButton()
 {
-	chrome.storage.local.get(["usermemos", "blockedUsers"], function(items) {
+	chrome.storage.local.get(["usermemos", "blockedUsers", "blockEnable", "memoEnable"], function(items) {
 		wrapOKText();
 
 		var usermemos = items.usermemos;
@@ -179,9 +233,23 @@ function clickedTotalOKButton()
 			return;
 		}
 
-		showOKListUsermemos(usermemos);
-		showOKListBlockedUsers(blockedUsers);
-		addOKListButtons(blockedUsers);
+		var memoEnable = items.memoEnable;
+		var blockEnable = items.blockEnable;
+
+		if (!memoEnable && !blockEnable) {
+		    return;
+		}
+
+		addOKListButtonsDivs();
+
+		if (items.memoEnable) {
+    		showOKListUsermemos(usermemos);
+			addMemoButtons();
+		}
+		if (items.blockEnable) {
+			showOKListBlockedUsers(blockedUsers);
+			addBlockButtons(blockedUsers);
+		}
 	});
 }
 
@@ -211,7 +279,7 @@ function showUsermemos(usermemos)
 	}
 
 	$("a:has(font > b)").each(function(index) {
-		var usernum = $(this).nextAll("button:first").attr("usernum");
+		var usernum = $(this).attr("href").split('mn=')[1];
 		var usermemo = usermemos[usernum];
 
 		if (usermemo != undefined) {
@@ -229,9 +297,8 @@ function showUsermemos(usermemos)
 
 function writeUsermemos()
 {
-	var username = $(this).attr("username");
-	var usernum = $(this).attr("usernum");
-	var userpage = $(this).attr("userpage");
+	var username = $(this).parent().attr("username");
+	var usernum = $(this).parent().attr("usernum");
 
 	chrome.storage.local.get("usermemos", function(items) {
 		var usermemos = items.usermemos;
@@ -246,7 +313,7 @@ function writeUsermemos()
 		    return;
 		}
 
-		usermemos[usernum] = {"username": username, "userpage": userpage, "memo": memo};
+		usermemos[usernum] = {"username": username, "memo": memo};
 		chrome.storage.local.set({"usermemos": usermemos});
 		
 		showUsermemos(usermemos);
@@ -278,10 +345,9 @@ function blockUser()
 
 	var $this = $(this);
 
-	var usernum = $this.attr("usernum");
-	var username = $this.attr("username");
-	var userpage = $this.attr("userpage");
-	var ip = $this.attr("ip");
+	var usernum = $this.parent().attr("usernum");
+	var username = $this.parent().attr("username");
+	var ip = $this.parent().attr("ip");
 
 	chrome.storage.local.get("blockedUsers", function(items) {
 		var blockedUsers = items.blockedUsers;
@@ -297,7 +363,7 @@ function blockUser()
 		    return;
 		}
 
-		blockedUsers.unshift({"username": username, "usernum": usernum, "userpage": userpage, "ip": ip});
+		blockedUsers.unshift({"username": username, "usernum": usernum, "ip": ip});
 		chrome.storage.local.set({"blockedUsers": blockedUsers});
 		
 		showBlockedUsers(blockedUsers);
@@ -314,8 +380,8 @@ function disableBlockedUser()
 		return;
 	} 
 
-	var usernum = $(this).attr("usernum");
-	var ip = $(this).attr("ip");
+	var usernum = $(this).parent().attr("usernum");
+	var ip = $(this).parent().attr("ip");
 
 	chrome.storage.local.get("blockedUsers", function(items) {
 		var blockedUsers = items.blockedUsers;

@@ -29,7 +29,11 @@ function showUsermemosTable()
 
 			var user = row.appendChild(document.createElement("td"))
 				    	  .appendChild(document.createElement("a"));
-  			user.href = usermemos[usernum].userpage;
+
+
+			var userpage = "http://todayhumor.co.kr/board/list.php?kind=member&mn=" + usernum;
+
+  			user.href = userpage;
 			user.target = "_blank";
 			user.appendChild(document.createTextNode(usermemos[usernum].username));
 			var memo = row.appendChild(document.createElement("td"))
@@ -126,7 +130,9 @@ function showBlockedUsersTable()
 			} else {
 				var user = row.appendChild(document.createElement("td"))
 					    	  .appendChild(document.createElement("a"));
-				user.href = blocked.userpage;
+
+				var userpage = "http://todayhumor.co.kr/board/list.php?kind=member&mn=" + blocked.usernum;
+				user.href = userpage;
 				user.target = "_blank";
 				user.appendChild(document.createTextNode(blocked.username));
 			}
@@ -326,14 +332,6 @@ function saveBlocked()
 	});
 }
 
-function saveOptions()
-{
-	var interval = this.interval.value;
-	var showBestReply = this.showBestReply.checked;
-	chrome.storage.local.set({"AutosaveInterval": interval, "showBestReply": showBestReply});
-	alert("저장 되었습니다.");
-}
-
 function deleteMemo()
 {
 	if (!confirm("정말로 삭제하시겠습니까?")) {
@@ -424,22 +422,50 @@ function openSavedTextWindow()
 
 function showOptions()
 {
-	chrome.storage.local.get(["AutosaveInterval", "showBestReply"], function(items) {
+	chrome.storage.local.get(["AutosaveInterval", "bestReplyEnable", "blockEnable", "memoEnable"], function(items) {
 		var interval = items.AutosaveInterval;
 		if (interval === undefined) {
 		    chrome.storage.local.set({"AutosaveInterval": 3});
 		    interval = 3;
 		}
 
-		var showBestReply = items.showBestReply;
-		if (showBestReply === undefined) {
-		    chrome.storage.local.set({"showBestReply": true});
-		    showBestReply = true;
+		var bestReplyEnable = items.bestReplyEnable;
+		if (bestReplyEnable == undefined) {
+		    chrome.storage.local.set({"bestReplyEnable": false});
+		    bestReplyEnable = false;
 		}
 
-		$("#showBestReply").attr("checked", showBestReply);
+		var blockEnable = items.blockEnable;
+		if (blockEnable == undefined) {
+		    chrome.storage.local.set({"blockEnable": true});
+		    blockEnable = true;
+		}
+
+		var memoEnable = items.memoEnable;
+		if (memoEnable == undefined) {
+		    chrome.storage.local.set({"memoEnable": true});
+		    memoEnable = true;
+		}
+
+		$("#bestReplyEnable").attr("checked", bestReplyEnable);
+		$("#blockEnable").attr("checked", blockEnable);
+		$("#memoEnable").attr("checked", memoEnable);
 		$("#interval").val(items.AutosaveInterval);
 	});
+}
+
+function saveOptions()
+{
+	var interval = this.interval.value;
+	var bestReplyEnable = this.bestReplyEnable.checked;
+	var blockEnable = this.blockEnable.checked;
+	var memoEnable = this.memoEnable.checked;
+
+	chrome.storage.local.set({"AutosaveInterval": interval,
+							  "bestReplyEnable": bestReplyEnable,
+							  "blockEnable": blockEnable,
+							  "memoEnable": memoEnable});
+	alert("저장 되었습니다.");
 }
 
 function addJjal()

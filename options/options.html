@@ -4,7 +4,7 @@
 	<title>OU Tools 옵션</title>
 	<meta charset="utf8">
 	<link rel="stylesheet" type="text/css" href="options.css">
-    <script src="/analytics.js"></script>
+	<script src="/analytics.js"></script>
 	<script src="/jquery.js"></script>
 	<script src="options_funcs.js"></script>
 </head>
@@ -38,10 +38,18 @@
 	<div class="confDiv">
 		<h2>기타 설정</h2>
 		<form action="#" id="editOptions" class="confDiv">
-			<input type="checkbox" id="showBestReply">
-			<label for="showBestReply">베스트리플 보기</label><br><br>
+			<input type="checkbox" id="blockEnable">
+			<label for="blockEnable">IP차단 기능 사용하기</label><br>
+
+			<input type="checkbox" id="memoEnable">
+			<label for="memoEnable">회원메모 기능 사용하기</label><br>
+
+			<input type="checkbox" id="bestReplyEnable">
+			<label for="bestReplyEnable">베스트리플 보기</label><br><br>
+
 			<input type="number" id="interval" name="interval" min="0" max="60">
 			<label for="interval">자동저장 간격 (분단위, 0으로 설정시 자동저장 안함)</label><br><br>
+
 			<input type="submit" class="saveOptionsButton" value="저장하기"><br>
 		</form>
 	</div>

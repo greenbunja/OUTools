@@ -1,6 +1,10 @@
 function showUsermemo()
 {
-	chrome.storage.local.get("usermemos", function(items) {
+	chrome.storage.local.get(["usermemos", "memoEnable"], function(items) {
+		if (!items.memoEnable) {
+		    return;
+		}
+
 		var usermemos = items.usermemos;
 
 		if ($.isEmptyObject(usermemos)) {
@@ -8,8 +12,8 @@ function showUsermemo()
 		}
 
 		$("td > a > font > b").each(function(index) {
-			var username = this.firstChild.nodeValue;
-			var usermemo = usermemos[username];
+			var usernum = $(this).parent().parent().attr("href").split('mn=')[1];
+			var usermemo = usermemos[usernum];
 
 			if (usermemo == undefined) {
 				return;
@@ -33,7 +37,12 @@ function isBlockedUser(blockedUsers, usernum)
 
 function showBlockedUsers()
 {
-	chrome.storage.local.get("blockedUsers", function(items) {
+	chrome.storage.local.get(["blockedUsers", "blockEnable"], function(items) {
+		if (!items.blockEnable) {
+		    return;
+		}
+
+
 		var blockedUsers = items.blockedUsers;
 
 		if (blockedUsers.length == 0) {
@@ -41,7 +50,7 @@ function showBlockedUsers()
 		}
 
 		$("tr:has(td > a > font > b)").each(function(index) {
-			var usernum = $(this).find("td > a:has(font > b)").attr("href").slice(24);
+			var usernum = $(this).find("td > a:has(font > b)").attr("href").split('mn=')[1];
 
 			if (isBlockedUser(blockedUsers, usernum)) {
 				$(this).find("td > a:not(:has(font))").css("color", "#FF0000")

@@ -2,8 +2,8 @@
     "manifest_version": 2,
 
     "name": "OU Tools",
-    "description": "베스트리플, 짤 선택, 글 임시저장, 당첨자 뽑기, 회원메모, IP 차단등",
-    "version": "1.6.1",
+    "description": "베스트리플, 짤 선택, 글 임시저장, 당첨자 뽑기, 회원메모, IP 차단, 브금끄기등",
+    "version": "1.7.0",
 
     "icons": {
         "16": "images/icon16.png",
@@ -16,7 +16,7 @@
 			"19": "images/icon19.png",
 			"38": "images/icon38.png"
 	    },	
-    	"default_title": "여러분 안생겨요",
+    	"default_title": "OUTools",
         "default_popup": "popup/popup.html"
     },
 
