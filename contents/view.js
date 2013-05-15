@@ -573,7 +573,7 @@ function showBestReply()
 // 짤
 function addJjal(event)
 {
-	var jjalURL = event.data.jjalURL;
+	var jjalURL = this.src;
 	$("textarea").val($("textarea").val() + jjalURL);
 	hideJjals();
 }
@@ -595,9 +595,12 @@ function showJjals()
 
 			for (var i = 0; i < jjals.length; i++) {
 				var jjalURL = jjals[i];
-				var jjal = $('<img src="' + jjalURL + '" class="jjal">')
-						   .click({"jjalURL": jjalURL}, addJjal);
-			    jjalsDiv.append(jjal);
+				$('<img src="' + jjalURL + '" class="jjal">')
+			    .appendTo(jjalsDiv)
+			    .click(addJjal)
+			    .error(function() {
+			    	this.parentNode.removeChild(this);
+			    });
 			}
 
 			jjalsDiv.attr("loaded", "loaded");
