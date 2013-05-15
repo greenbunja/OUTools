@@ -2,8 +2,8 @@
     "manifest_version": 2,
 
     "name": "OU Tools",
-    "description": "베스트리플, 짤 선택, 글 임시저장, 당첨자 뽑기, 회원메모, IP 차단, 브금끄기등",
-    "version": "1.7.1",
+    "description": "베스트리플, 짤 선택, 글 임시저장, 당첨자 뽑기, 회원메모, IP 차단, 브금끄기, 오유 더블클릭기능 토글 등",
+    "version": "1.7.4",
 
     "icons": {
         "16": "images/icon16.png",
@@ -16,7 +16,7 @@
 			"19": "images/icon19.png",
 			"38": "images/icon38.png"
 	    },	
-    	"default_title": "OUTools",
+    	"default_title": "OU Tools",
         "default_popup": "popup/popup.html"
     },
 
@@ -36,6 +36,14 @@
             "matches": ["http://todayhumor.co.kr/board/write.php*",
                         "http://todayhumor.co.kr/board/modify.php*"],
             "js": ["jquery.js", "contents/write.js"]
+        }, 
+        {
+            "matches": ["http://todayhumor.co.kr/*"],
+            "js": ["jquery.js", "contents/all.js"]
+        },
+        {
+            "matches": ["*://*/*"],
+            "js": ["jquery.js", "contents/every_website.js"]
         }
     ],
 

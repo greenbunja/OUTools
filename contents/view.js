@@ -196,6 +196,10 @@ function addMemoButtons()
 
 function addBlockButtons(blockedUsers)
 {
+	if (blockedUsers == undefined) {
+	    blockedUsers = [];
+	}
+
 	$('.buttonsSpan').each(function() {
 		var $this = $(this);
 
@@ -224,15 +228,7 @@ function clickedTotalOKButton()
 		wrapOKText();
 
 		var usermemos = items.usermemos;
-		if (usermemos == undefined) {
-			return;
-		}
-
 		var blockedUsers = items.blockedUsers;
-		if (blockedUsers == undefined) {
-			return;
-		}
-
 		var memoEnable = items.memoEnable;
 		var blockEnable = items.blockEnable;
 
@@ -243,11 +239,16 @@ function clickedTotalOKButton()
 		addOKListButtonsDivs();
 
 		if (items.memoEnable) {
-    		showOKListUsermemos(usermemos);
+			if (usermemos != undefined) {
+	    		showOKListUsermemos(usermemos);
+			}
 			addMemoButtons();
 		}
 		if (items.blockEnable) {
-			showOKListBlockedUsers(blockedUsers);
+			if (blockedUsers != undefined) {
+				showOKListBlockedUsers(blockedUsers);
+			}
+
 			addBlockButtons(blockedUsers);
 		}
 	});
@@ -428,6 +429,10 @@ function showWriterIsBlocked(blockedUsers)
 
 function showOKListBlockedUsers(blockedUsers)
 {
+	if (blockedUsers == undefined) {
+	    blockedUsers = [];
+	}
+
 	$("#ok_layer > span.okSpan").each(function() {
 		var usernum = $(this).nextAll("a:first").text();
 

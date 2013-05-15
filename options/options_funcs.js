@@ -194,13 +194,16 @@ function ShowSavedTextsTable() {
 			var text = row.appendChild(document.createElement("td"))
 				    	  .appendChild(document.createElement("a"));
 			text.href = "javascript:;";
-			$(text).attr("text", savedText.text);
-			$(text).click(openSavedTextWindow);
+			$(text).click({text: savedText.text}, openSavedTextWindow);
 			
+			if ($.trim(savedText.subject) == "") {
+			    savedText.subject = "[무제]";
+			}
+
 			text.appendChild(document.createTextNode(savedText.subject));
 
-			var text = row.appendChild(document.createElement("td"))
-						  .appendChild(document.createTextNode(savedText.date));
+			row.appendChild(document.createElement("td"))
+			   .appendChild(document.createTextNode(savedText.date));
 
 			  
 			var deleteButton = row.appendChild(document.createElement("td"))
@@ -408,11 +411,11 @@ function deleteJjal()
 	});
 }
 
-function openSavedTextWindow()
+function openSavedTextWindow(event)
 {
 	var showTextWindow = window.open(null, "_blank", "width=500px, height=500px");
 	$("<textarea></textarea>")
-	.val($(this).attr("text"))
+	.val(event.data.text)
 	.attr("autofocus", "")
 	.css("width", "100%")
 	.css("height", "100%")
@@ -422,7 +425,7 @@ function openSavedTextWindow()
 
 function showOptions()
 {
-	chrome.storage.local.get(["AutosaveInterval", "bestReplyEnable", "blockEnable", "memoEnable"], function(items) {
+	chrome.storage.local.get(["AutosaveInterval", "bestReplyEnable", "blockEnable", "memoEnable", "dblclickEnable"], function(items) {
 		var interval = items.AutosaveInterval;
 		if (interval === undefined) {
 		    chrome.storage.local.set({"AutosaveInterval": 3});
@@ -447,10 +450,18 @@ function showOptions()
 		    memoEnable = true;
 		}
 
+		var dblclickEnable = items.dblclickEnable;
+		if (dblclickEnable == undefined) {
+		    chrome.storage.local.set({"dblclickEnable": {"ou": true, "every": false}});
+		    dblclickEnable = {"ou": true, "every": false};
+		}
+
 		$("#bestReplyEnable").attr("checked", bestReplyEnable);
 		$("#blockEnable").attr("checked", blockEnable);
 		$("#memoEnable").attr("checked", memoEnable);
-		$("#interval").val(items.AutosaveInterval);
+		$("#interval").val(interval);
+		$("#dblclickOnOU").attr("checked", dblclickEnable.ou);
+		$("#dblclickOnEveryWebsite").attr("checked", dblclickEnable.every);
 	});
 }
 
@@ -460,11 +471,13 @@ function saveOptions()
 	var bestReplyEnable = this.bestReplyEnable.checked;
 	var blockEnable = this.blockEnable.checked;
 	var memoEnable = this.memoEnable.checked;
+	var dblclickEnable = {"ou": this.dblclickOnOU.checked, "every": this.dblclickOnEveryWebsite.checked};
 
 	chrome.storage.local.set({"AutosaveInterval": interval,
 							  "bestReplyEnable": bestReplyEnable,
 							  "blockEnable": blockEnable,
-							  "memoEnable": memoEnable});
+							  "memoEnable": memoEnable,
+							  "dblclickEnable": dblclickEnable});
 	alert("저장 되었습니다.");
 }
 

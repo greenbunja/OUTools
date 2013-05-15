@@ -1,7 +1,14 @@
 function showUsermemo()
 {
 	chrome.storage.local.get(["usermemos", "memoEnable"], function(items) {
-		if (!items.memoEnable) {
+		var memoEnable = items.memoEnable;
+
+		if (memoEnable == undefined) {
+			chrome.storage.local.set({"memoEnable": true});
+		    memoEnable = true;
+		}
+
+		if (!memoEnable) {
 		    return;
 		}
 
@@ -38,6 +45,11 @@ function isBlockedUser(blockedUsers, usernum)
 function showBlockedUsers()
 {
 	chrome.storage.local.get(["blockedUsers", "blockEnable"], function(items) {
+		if (items.blockedUsers == undefined) {
+			chrome.storage.local.set({"blockEnable": true});
+		    blockEnable = true;
+		    return;
+		}
 		if (!items.blockEnable) {
 		    return;
 		}

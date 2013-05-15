@@ -1,11 +1,15 @@
-$("#editMemos").submit(saveMemo);
-$("#editBlocked").submit(saveBlocked);
-$("#editOptions").submit(saveOptions)
-showOptions();
-showUsermemosTable();
-showBlockedUsersTable();
-ShowSavedTextsTable();
-$("#addBlockedUser").click(addBlockedUser);
+$("#editJjalNumber").submit(editJjalNumber);
+$("#resetJjals").click(function() {
+	if (!confirm("정말로 초기화 하시겠습니까?")) {
+	    return;
+	}
+
+	resetJjals();
+	location.reload();
+});
+ShowJjalsTable();
+$("#addJjal").click(addJjal)
+
 
 chrome.storage.local.get("dblclickEnable", function(items) {
 	var dblclickEnable = items.dblclickEnable;
