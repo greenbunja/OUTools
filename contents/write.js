@@ -1,8 +1,5 @@
 function saveText()
 {
-	if (!confirm("저장 하시겠습니까?")) {
-	    return;
-	}
 	chrome.storage.local.get("savedTexts", function(items) {
 		var subject = $("#subject").val();
 		if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
@@ -26,8 +23,6 @@ function saveText()
 
 		savedTexts.unshift({"subject": subject, "text": text, "date": nowString});
 		chrome.storage.local.set({"savedTexts": savedTexts});
-
-		alert("저장 되었습니다.");
 	});
 }
 
@@ -78,49 +73,32 @@ function loadRecentSave()
 	});
 }
 
-function autosave()
-{
-	chrome.storage.local.get("savedTexts", function(items) {
-		var subject = $("#subject").val();
-		if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
-		    var text = $("#tx_canvas_wysiwyg").contents().find("body").html();
-		} else {
-			var text =  $("#tx_canvas_source").val();
-		}
-
-		var savedTexts = items.savedTexts;
-
-		if (savedTexts == undefined) {
-		    savedTexts = [];
-		}
-
-		var now = new Date();
-		var nowString = now.getFullYear().toString() + '.' +
-					    (now.getMonth() + 1).toString() + '.' +
-					    now.getDate().toString() + ' ' +
-					    now.getHours().toString() + ':' +
-					    now.getMinutes().toString();
-
-		savedTexts.unshift({"subject": subject, "text": text, "date": nowString});
-		chrome.storage.local.set({"savedTexts": savedTexts});
-	});
-}
-
 function setAutosave()
 {
 	chrome.storage.local.get("AutosaveInterval", function(items) {
 		var interval = items.AutosaveInterval;
-		if (interval == undefined || interval <= 0 || interval > 60) {
+
+		if (interval <= 0 || interval > 60) {
 		    return;
 		}
 
-		setInterval(autosave, interval * 60000);
+		if (interval == undefined) {
+			chrome.storage.local.set({"AutosaveInterval": 3});
+		    interval = 3;
+		}
+
+		setInterval(saveText, interval * 60000);
 	});
 }
 
 $("<button></button>")
 .text("임시저장 하기")
-.click(saveText)
+.click(function() {
+	if (!confirm("저장 하시겠습니까?")) {
+	    return;
+	}
+	saveText();
+})
 .insertAfter($("#subject"));
 
 $("<button></button>")

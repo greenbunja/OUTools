@@ -45,13 +45,13 @@ function showUsermemosTable()
 			var deleteButton = row.appendChild(document.createElement("td"))
 			   		 	    	  .appendChild(document.createElement("a"));
 			deleteButton = $(deleteButton);
-			deleteButton.attr("href", '#')
+			deleteButton.attr("href", 'javascript:;')
 						.attr("usernum", usernum)
 						.text("삭제")
 						.click(deleteMemo);
 		}
 
-		$("#editMemos").append('<input type="submit" id="saveMemo" class="saveOptionsButton" value="변경 저장">');
+		$("#editMemos").append('<input type="submit" id="saveMemo" value="변경 저장">');
 	});
 }
 
@@ -152,17 +152,17 @@ function showBlockedUsersTable()
 			var deleteButton = row.appendChild(document.createElement("td"))
 			   		 	    	  .appendChild(document.createElement("a"));
 			deleteButton = $(deleteButton);
-			deleteButton.attr("href", '#')
+			deleteButton.attr("href", 'javascript:;')
 						.attr("index", i)
 						.text("삭제")
 						.click(disableBlocked);
 		}
 
-		$("#editBlocked").append('<input type="submit" id="saveBlocked" class="saveOptionsButton" value="변경 저장">');
+		$("#editBlocked").append('<input type="submit" id="saveBlocked" value="변경 저장">');
 	});
 }
 
-function ShowSavedTextsTable() {
+function showSavedTextsTable() {
 	chrome.storage.local.get("savedTexts", function(items) {
 		var savedTexts = items.savedTexts;
 
@@ -209,7 +209,7 @@ function ShowSavedTextsTable() {
 			var deleteButton = row.appendChild(document.createElement("td"))
 			   		 	    	  .appendChild(document.createElement("a"));
 			deleteButton = $(deleteButton);
-			deleteButton.attr("href", '#')
+			deleteButton.attr("href", 'javascript:;')
 						.attr("index", i)
 						.text("삭제")
 						.click(deleteSavedText);
@@ -253,7 +253,6 @@ function ShowJjalsTable() {
 			   				 .appendChild(document.createElement("input"));
 
 			jjalNum.type = "number";
-			jjalNum.name = "jjal" + (i + 1);
 			jjalNum.value = i + 1;
 			jjalNum.min = 1;
 			jjalNum.max = jjals.length;
@@ -278,12 +277,83 @@ function ShowJjalsTable() {
 			var deleteButton = row.appendChild(document.createElement("td"))
 			   		 	    	  .appendChild(document.createElement("a"));
 			deleteButton = $(deleteButton);
-			deleteButton.attr("href", '#')
+			deleteButton.attr("href", 'javascript:;')
 						.attr("index", i)
 						.text("삭제")
 						.click(deleteJjal);
 		}
-		$("#editJjalNumber").append('<input type="submit" id="saveJjalNumber" value="변경 저장">');
+		$('<input></input>')
+		.attr("type", "submit")
+		.val("변경저장")
+		.appendTo("#editJjalNumber");
+	});
+}
+
+function showBookmarksTable()
+{
+	chrome.storage.local.get("bookmarks", function(items) {
+		var bookmarks = items.bookmarks;
+
+		if ($.isEmptyObject(bookmarks)) {
+		    $("#bookmarks_div").text("북마크가 없습니다.");
+		    return;
+		}
+
+		var table = document.getElementById("bookmarks_div").appendChild(document.createElement("table"));
+
+		var row = table.appendChild(document.createElement("thead"))
+					   .appendChild(document.createElement("tr"));
+
+		row.appendChild(document.createElement("th"))
+		   .appendChild(document.createTextNode("번호"));
+		row.appendChild(document.createElement("th"))
+		   .appendChild(document.createTextNode("이름"));
+		row.appendChild(document.createElement("th"))
+		   .appendChild(document.createTextNode("주소"));
+		row.appendChild(document.createElement("th"));
+
+		var tbody = table.appendChild(document.createElement("tbody"));
+
+		for (var i = 0; i < bookmarks.length; i++) {
+			var bookmark = bookmarks[i];
+
+			var row = tbody.appendChild(document.createElement("tr"));
+
+			var bookmarkNum = row.appendChild(document.createElement("td"))
+			   				 .appendChild(document.createElement("input"));
+
+			bookmarkNum.type = "number";
+			bookmarkNum.value = i + 1;
+			bookmarkNum.min = 1;
+			bookmarkNum.max = bookmarks.length;
+
+			row.appendChild(document.createElement("td"))
+			   .appendChild(document.createTextNode(bookmark.name));
+
+			var urlCell = row.appendChild(document.createElement("td"))
+				    	  .appendChild(document.createElement("a"));
+
+  			urlCell.href = bookmark.url;
+			urlCell.target = "_blank";
+			if (bookmark.url.length > 80) {
+			    urlCell.appendChild(document.createTextNode(bookmark.url.slice(0, 80) + '......'));
+			} else {
+				urlCell.appendChild(document.createTextNode(bookmark.url));
+			}
+
+			var deleteButton = row.appendChild(document.createElement("td"))
+			   		 	    	  .appendChild(document.createElement("a"));
+			deleteButton = $(deleteButton);
+			deleteButton.attr("href", 'javascript:;')
+						.attr("index", i)
+						.text("삭제")
+						.click(deleteBookmark);
+		}
+
+		$('<input></input>')
+		.attr("type", "submit")
+		.val("변경저장")
+		.appendTo("#edit_bookmarks_num");
 	});
 }
 
@@ -411,6 +481,26 @@ function deleteJjal()
 	});
 }
 
+function deleteBookmark()
+{
+	if (!confirm("정말로 삭제하시겠습니까?")) {
+	    return
+	}
+
+	var index = $(this).attr("index");
+
+	chrome.storage.local.get("bookmarks", function(items) {
+		var bookmarks = items.bookmarks;
+
+		delete bookmarks[index];
+		
+
+		chrome.storage.local.set({"bookmarks": bookmarks});
+
+		location.reload();
+	});
+}
+
 function openSavedTextWindow(event)
 {
 	var showTextWindow = window.open(null, "_blank", "width=500px, height=500px");
@@ -425,12 +515,17 @@ function openSavedTextWindow(event)
 
 function showOptions()
 {
-	chrome.storage.local.get(["AutosaveInterval", "bestReplyEnable", "blockEnable", "memoEnable", "dblclickEnable"], function(items) {
+	chrome.storage.local.get(["AutosaveInterval", "bestReplyEnable", "blockEnable",
+							  "memoEnable", "dblclickEnable", "bookmarkEnable",
+							  "shortcutEnable", "blockIlbe"], 
+							  function(items) {
 		var interval = items.AutosaveInterval;
 		if (interval === undefined) {
 		    chrome.storage.local.set({"AutosaveInterval": 3});
 		    interval = 3;
 		}
+
+		var enableList = items.enableList;
 
 		var bestReplyEnable = items.bestReplyEnable;
 		if (bestReplyEnable == undefined) {
@@ -456,12 +551,33 @@ function showOptions()
 		    dblclickEnable = {"ou": true, "every": false};
 		}
 
+		var bookmarkEnable = items.bookmarkEnable;
+		if (bookmarkEnable == undefined) {
+		    chrome.storage.local.set({"bookmarkEnable": true});
+		    bookmarkEnable = true;
+		}
+
+		var shortcutEnable = items.shortcutEnable;
+		if (shortcutEnable == undefined) {
+		    chrome.storage.local.set({"shortcutEnable": true});
+		    shortcutEnable = true;
+		}
+
+		var blockIlbe = items.blockIlbe;
+		if (blockIlbe == undefined) {
+		    chrome.storage.local.set({"blockIlbe": false});
+		    blockIlbe = false;
+		}
+
 		$("#bestReplyEnable").attr("checked", bestReplyEnable);
 		$("#blockEnable").attr("checked", blockEnable);
 		$("#memoEnable").attr("checked", memoEnable);
 		$("#interval").val(interval);
-		$("#dblclickOnOU").attr("checked", dblclickEnable.ou);
-		$("#dblclickOnEveryWebsite").attr("checked", dblclickEnable.every);
+		$("#dblclick_ou").attr("checked", dblclickEnable.ou);
+		$("#dblclick_every").attr("checked", dblclickEnable.every);
+		$("#bookmark_enable").attr("checked", bookmarkEnable);
+		$("#shortcut_enable").attr("checked", shortcutEnable);
+		$("#block_ilbe").attr("checked", blockIlbe);
 	});
 }
 
@@ -471,13 +587,19 @@ function saveOptions()
 	var bestReplyEnable = this.bestReplyEnable.checked;
 	var blockEnable = this.blockEnable.checked;
 	var memoEnable = this.memoEnable.checked;
-	var dblclickEnable = {"ou": this.dblclickOnOU.checked, "every": this.dblclickOnEveryWebsite.checked};
+	var dblclickEnable = {"ou": this.dblclick_ou.checked, "every": this.dblclick_every.checked};
+	var bookmarkEnable = this.bookmark_enable.checked;
+	var shortcutEnable = this.shortcut_enable.checked;
+	var blockIlbe = this.block_ilbe.checked;
 
 	chrome.storage.local.set({"AutosaveInterval": interval,
 							  "bestReplyEnable": bestReplyEnable,
 							  "blockEnable": blockEnable,
 							  "memoEnable": memoEnable,
-							  "dblclickEnable": dblclickEnable});
+							  "dblclickEnable": dblclickEnable,
+							  "bookmarkEnable": bookmarkEnable,
+							  "shortcutEnable": shortcutEnable,
+							  "blockIlbe": blockIlbe});
 	alert("저장 되었습니다.");
 }
 
@@ -533,7 +655,27 @@ function addBlockedUser()
 	});
 }
 
-function editJjalNumber()
+function addBookmark()
+{
+	var name = this.name.value;
+	var url = this.url.value;
+
+	if (url.slice(0, 4) != "http") {
+	   url = "http://" + url;
+	}
+	chrome.storage.local.get("bookmarks", function(items) {
+		var bookmarks = items.bookmarks;
+		if (bookmarks == undefined) {
+		    bookmarks = [];
+		}
+		bookmarks.push({"name": name, "url": url});
+		chrome.storage.local.set({"bookmarks": bookmarks});
+
+		location.reload();
+	});
+}
+
+function saveJjalsNum()
 {
 	var elements = this.elements;
 
@@ -561,6 +703,73 @@ function editJjalNumber()
 
 
 		chrome.storage.local.set({"jjals": jjals});
+
+		alert("저장 되었습니다.");
+		location.reload();
+	});
+}
+
+function saveBookmarksNum()
+{
+	var elements = this.elements;
+
+ 	chrome.storage.local.get("bookmarks", function(items) {
+ 		var bookmarks = [];
+	 	var bookmarksCopy = items.bookmarks;
+	 	var bookmarkNumbers = [];
+		for (var i = 0; i < elements.length; i++) {
+
+			var bookmarkNumberInput = elements[i];
+			
+			if (bookmarkNumberInput.type != "number") {
+			    continue;
+			}
+
+			var bookmarkNumber = bookmarkNumberInput.value;
+
+			bookmarkNumbers.push({"i": i, "num": bookmarkNumber - 1});
+		}
+
+		bookmarkNumbers.sort(function(a,b){return a.num-b.num});
+
+		for (var i = 0; i < bookmarkNumbers.length; i++) {
+			bookmarks[i] = bookmarksCopy[bookmarkNumbers[i].i];
+		}
+
+
+		chrome.storage.local.set({"bookmarks": bookmarks});
+
+		alert("저장 되었습니다.");
+		location.reload();
+	});
+}
+
+function saveShortcuts()
+{
+	var elements = this.elements;
+	delete elements[elements.length - 1];
+
+ 	chrome.storage.local.get("shortcuts", function(items) {
+ 		var shortcuts = items.shortcuts;
+
+ 		if (shortcuts == undefined) {
+ 		    shortcuts = [];
+ 		}
+
+ 		for (var i = 0; i < elements.length; i++) {
+ 			if (elements[i].type != "text") {
+ 			    continue;
+ 			}
+
+ 			var url = elements[i].value;
+			if ($.trim(url) != "" && url.slice(0, 4) != "http") {
+			   url = "http://" + url;
+			}
+
+ 			shortcuts[(i+1) % 10] = url;
+ 		}
+
+		chrome.storage.local.set({"shortcuts": shortcuts});
 
 		alert("저장 되었습니다.");
 		location.reload();

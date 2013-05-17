@@ -1,71 +1,3 @@
-function initPage()
-{
-	var xbutton = $('<img src="chrome-extension://pblkcpokpfnkoempdnhpealegchhegdj/images/xbutton.png" id="xbutton">')
-				  .click(hideJjals);
-	$('<div id="jjals"></div>').append(xbutton)
-							   .appendTo($("body"));
-
-	$('<input type="button" value="자주쓰는 짤중에서 선택하기">')
-	.click(showJjals)
-	.appendTo($("#memo_insert_submit_image").parent().next());
-
-	wrapOKText();
-
-	chrome.storage.local.get(["blockEnable", "memoEnable", "usermemos", "blockedUsers"], function(items) {
-		var blockEnable = items.blockEnable;
-		if (blockEnable == undefined) {
-			chrome.storage.local.set({"blockEnable": true});
-		    blockEnable = true;
-		}
-
-		var memoEnable = items.memoEnable;
-		if (memoEnable == undefined) {
-			chrome.storage.local.set({"memoEnable": true});
-		    memoEnable = true;
-		}
-
-		if (!blockEnable && !memoEnable) {
-		    return;
-		}
-
-		addButtonsDivs();
-		$("center > input").click(clickedTotalOKButton);
-
-		var usermemos = items.usermemos;
-		if (usermemos == undefined) {
-		    usermemos = {};
-		}
-
-		if (memoEnable) {
-			addMemoButtons();
-			showUsermemos(usermemos);					    
-		}
-
-		var blockedUsers = items.blockedUsers;
-		if (blockedUsers == undefined) {
-		    blockedUsers = [];
-		}
-
-		if (blockEnable) {
-			addBlockButtons(blockedUsers);
-			showBlockedUsers(blockedUsers);
-		}
-	});
-
-	chrome.storage.local.get("bestReplyEnable", function(items) {
-		var bestReplyEnable = items.bestReplyEnable;
-
-		if (bestReplyEnable == undefined) {
-		    chrome.storage.local.set({"bestReplyEnable": false});
-		    bestReplyEnable = false;
-		}
-
-		if (bestReplyEnable) {
-		    showBestReply();
-		}
-	}) ;
-}
-
 function wrapOKText()
 {
 	$("#ok_layer").contents().filter(function() {
@@ -583,36 +515,6 @@ function addJjal(event)
 	hideJjals();
 }
 
-function showJjals()
-{
-	var jjalsDiv = $("#jjals").css("display", "block");
-
-	if (jjalsDiv.attr("loaded") == undefined) {
-		chrome.storage.local.get("jjals", function(items) {
-			var jjals = items.jjals;
-
-			if (jjals === undefined) {
-				resetJjals();
-			} else if(jjals.length == 0) {
-				jjalsDiv.text("짤이 없습니다.");
-				return;
-			}
-
-			for (var i = 0; i < jjals.length; i++) {
-				var jjalURL = jjals[i];
-				$('<img src="' + jjalURL + '" class="jjal">')
-			    .appendTo(jjalsDiv)
-			    .click(addJjal)
-			    .error(function() {
-			    	this.parentNode.removeChild(this);
-			    });
-			}
-
-			jjalsDiv.attr("loaded", "loaded");
-		});
-	}
-}
-
 function hideJjals()
 {
 	$("#jjals").css("display", "none");
@@ -684,12 +586,12 @@ function offBGMs()
 		function R(w) {
 			try {
 				var d=w.document,j,i,t,T,N,b,r=1,C;
-				for(j=0;t=["object","embed","applet","iframe"][j];++j) {
+				for(j=0;t=["object", "embed", "applet", "iframe", "video", "audio"][j];++j) {
 					T=d.getElementsByTagName(t);
 
 					for(i=T.length-1;(i+1)&&(N=T[i]);--i) {
-
-						if (T[i].id == "ZeroClipboardMovie_1") {
+						var parents = $(T[i]).parents(".contentContainer, #tail_layer");
+						if (parents.length == 0) {
 						    continue;
 						}
 
@@ -713,10 +615,133 @@ function offBGMs()
 	})();
 }
 
-initPage();
+(function () {
+	var xbutton = $('<img src="' + chrome.extension.getURL("images/xbutton.png") + '" id="xbutton">')
+				  .click(hideJjals);
+	$('<div id="jjals"></div>').append(xbutton)
+							   .appendTo($("body"));
+
+	$('<input type="button" value="자주쓰는 짤중에서 선택하기">')
+	.appendTo($("#memo_insert_submit_image").parent().next())
+	.click(function () {
+		var jjalsDiv = $("#jjals").css("display", "block");
+
+		if (jjalsDiv.attr("loaded") == undefined) {
+			chrome.storage.local.get("jjals", function(items) {
+				var jjals = items.jjals;
+
+				if (jjals === undefined) {
+					resetJjals();
+				} else if(jjals.length == 0) {
+					jjalsDiv.text("짤이 없습니다.");
+					return;
+				}
+
+				for (var i = 0; i < jjals.length; i++) {
+					var jjalURL = jjals[i];
+					$('<img src="' + jjalURL + '" class="jjal">')
+				    .appendTo(jjalsDiv)
+				    .click(addJjal)
+				    .error(function() {
+				    	this.parentNode.removeChild(this);
+				    });
+				}
+
+				jjalsDiv.attr("loaded", "loaded");
+			});
+		}
+	});
+
+	wrapOKText();
+
+	chrome.storage.local.get(["blockEnable", "memoEnable", "usermemos", "blockedUsers"], function(items) {
+		var blockEnable = items.blockEnable;
+		if (blockEnable == undefined) {
+			chrome.storage.local.set({"blockEnable": true});
+		    blockEnable = true;
+		}
+
+		var memoEnable = items.memoEnable;
+		if (memoEnable == undefined) {
+			chrome.storage.local.set({"memoEnable": true});
+		    memoEnable = true;
+		}
+
+		if (!blockEnable && !memoEnable) {
+		    return;
+		}
+
+		addButtonsDivs();
+
+		$("center > input").click(function () {
+			chrome.storage.local.get(["usermemos", "blockedUsers"], function(items) {
+				wrapOKText();
+
+				var usermemos = items.usermemos;
+				var blockedUsers = items.blockedUsers;
+
+				if (!memoEnable && !blockEnable) {
+				    return;
+				}
+
+				addOKListButtonsDivs();
+
+				if (memoEnable) {
+					if (usermemos != undefined) {
+			    		showOKListUsermemos(usermemos);
+					}
+					addMemoButtons();
+				}
+				if (blockEnable) {
+					if (blockedUsers != undefined) {
+						showOKListBlockedUsers(blockedUsers);
+					}
+
+					addBlockButtons(blockedUsers);
+				}
+			});
+		});
+
+		var usermemos = items.usermemos;
+		if (usermemos == undefined) {
+		    usermemos = {};
+		}
+
+		if (memoEnable) {
+			addMemoButtons();
+			showUsermemos(usermemos);					    
+		}
+
+		var blockedUsers = items.blockedUsers;
+		if (blockedUsers == undefined) {
+		    blockedUsers = [];
+		}
+
+		if (blockEnable) {
+			addBlockButtons(blockedUsers);
+			showBlockedUsers(blockedUsers);
+		}
+	});
+
+	chrome.storage.local.get("bestReplyEnable", function(items) {
+		var bestReplyEnable = items.bestReplyEnable;
+
+		if (bestReplyEnable == undefined) {
+		    chrome.storage.local.set({"bestReplyEnable": false});
+		    bestReplyEnable = false;
+		}
+
+		if (bestReplyEnable) {
+		    showBestReply();
+		}
+	}) ;
+})();
+
 chrome.storage.local.get("offBGMs", function(items) {
 	if (items.offBGMs == true) {
 		offBGMs();	    
 	}
 });
+
+
 chrome.runtime.onMessage.addListener(reciveMessage);

@@ -12,61 +12,144 @@
 	<h1>OU Tools 옵션</h1>
 
 	<div id="navigator">
-		<a href="#MemosDiv">회원메모 관리</a><br>
-		<a href="#BlockedUsersDiv">IP차단 관리</a><br>
-		<a href="#SavedTextsDiv">임시저장된 글 관리</a><br>
+		<a href="options.html#show_memos">회원메모 관리</a><br>
+		<a href="options.html#show_blocked">IP차단 관리</a><br>
+		<a href="options.html#show_savedtext">임시저장된 글 관리</a><br>
 		<a href="jjals_options.html">자주쓰는 짤 관리</a><br>
-		<a href="#editOptions">기타 설정</a>
+		<a href="options.html#show_bookmarks">북마크 관리</a><br>
+		<a href="options.html#show_shortcuts">단축키 관리</a><br> 
+		<a href="options.html#misc_options">기타 설정</a>
 	</div>
 
-	<div id="MemosDiv" class="confDiv">
-		<h2>회원메모 관리</h2>
+	<section>
+		<h2 id="show_memos">회원메모 관리</h2>
 		<form action="#" id="editMemos">
 			<div id="MemosTableDiv"></div>
 		</form>
-	</div>
+	</section>
 
-	<div id="BlockedUsersDiv" class="confDiv">
-		<h2>IP차단 관리</h2>
+	<section>
+		<h2 id="show_blocked">IP차단 관리</h2>
 		<a href="javascript:;" id="addBlockedUser">차단회원 추가하기</a>
 		<form action="#" id="editBlocked">
 			<div id="BlockedUsersTableDiv"></div>
 		</form>
-	</div>
+	</section>
 
-	<div id="SavedTextsDiv" class="confDiv">
-		<h2>임시저장된 글</h2>
+	<section>
+		<h2 id="show_savedtext">임시저장된 글</h2>
 		<div id="SavedTextsTableDiv"></div>
-	</div>
+	</section>
 
-	<div id="JjalsDiv" class="confDiv">
+	<section>
 		<a href="jjals_options.html"><h2>자주쓰는 짤 관리</h2></a>
-	</div>
+	</section>
 
-	<div class="confDiv">
-		<h2>기타 설정</h2>
-		<form action="#" id="editOptions" class="confDiv">
+	<section>
+		<h2 id="show_bookmarks">북마크 관리</h2>
+		<form action="javascript:;" id="edit_bookmarks_num">
+			<div id="bookmarks_div"></div>
+		</form><br>
+
+		<form action="javascript:;" id="add_bookmark">
+			<strong>북마크 추가</strong><br>
+			<input type="text" name="name" size="10" placeholder="이름">
+			<input type="text" name="url" size="40" placeholder="주소"><br>
+			<input type="submit" value="추가하기">
+		</form>
+	</section>
+
+	<section>
+		<h2 id="show_shortcuts">단축키 관리</h2>
+		<form id="edit_shortcuts" action="javascript:;">
+			<table>
+				<thead>
+					<tr>
+						<th>단축키</th>
+						<th>주소</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Alt + 1</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 2</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 3</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 4</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 5</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 6</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 7</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 8</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 9</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+					<tr>
+						<td>Alt + 0</td>
+						<td><input type="text" size="40"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<input type="submit" value="저장하기">
+		</form>
+	</section>
+
+	<section>
+		<h2 id="misc_options">기타 설정</h2>
+		<form action="javascript:;" id="editOptions" class="conf_div">
 			<input type="checkbox" id="blockEnable">
 			<label for="blockEnable">IP차단 기능 사용하기</label><br>
 
 			<input type="checkbox" id="memoEnable">
 			<label for="memoEnable">회원메모 기능 사용하기</label><br>
 
+			<input type="checkbox" id="bookmark_enable">
+			<label for="bookmark_enable">북마크 사용하기</label><br>
+
+			<input type="checkbox" id="shortcut_enable">
+			<label for="shortcut_enable">단축키 사용하기</label><br>
+
 			<input type="checkbox" id="bestReplyEnable">
-			<label for="bestReplyEnable">베스트리플 보기</label><br><br>
+			<label for="bestReplyEnable">베스트리플 사용하기</label><br>
+
+			<input type="checkbox" id="block_ilbe">
+			<label for="block_ilbe">일베차단기능 사용하기</label><br><br>
 
 			<strong>더블클릭기능</strong><br>
-			<input type="checkbox" id="dblclickOnOU">
-			<label for="dblclickOnOU">오유에서 더블클릭기능 사용하기</label><br>
-			<input type="checkbox" id="dblclickOnEveryWebsite">
-			<label for="dblclickOnEveryWebsite">모든 웹사이트에서 더블클릭기능 사용하기</label><br><br>		
+			<input type="checkbox" id="dblclick_ou">
+			<label for="dblclick_ou">오유에서 더블클릭기능 사용하기</label><br>
+			<input type="checkbox" id="dblclick_every">
+			<label for="dblclick_every">모든 웹사이트에서 더블클릭기능 사용하기</label><br><br>		
 
-			<input type="number" id="interval" name="interval" min="0" max="60">
+			<input type="number" id="interval" min="0" max="60">
 			<label for="interval">자동저장 간격 (분단위, 0으로 설정시 자동저장 안함)</label><br><br>
 
-			<input type="submit" class="saveOptionsButton" value="저장하기"><br>
+			<input type="submit" value="저장하기"><br>
 		</form>
-	</div>
+	</section>
 
 	<footer>
 		<p>개발자 메일: ekkuym@gmail.com<br>

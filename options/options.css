@@ -17,12 +17,12 @@ a {
 	text-decoration: none;
 }
 
-#saveJjalNumber, .saveOptionsButton {
+input[type="submit"] {
 	float: right;
 	clear: both;
 }
 
-.confDiv {
+section {
 	float: left;
 	clear: left;
 }
@@ -51,5 +51,12 @@ footer {
 	right: 0px;
 	top: 0px;
 	float: right;
+}
+
+#navigator > a {
 	text-decoration: underline;
+}
+
+#add_bookmark {
+	float: left;
 }

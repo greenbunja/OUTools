@@ -1,10 +1,35 @@
 $("#editMemos").submit(saveMemo);
 $("#editBlocked").submit(saveBlocked);
 $("#editOptions").submit(saveOptions)
+$("#add_bookmark").submit(addBookmark);
+$("#edit_bookmarks_num").submit(saveBookmarksNum)
+$('#edit_shortcuts').submit(saveShortcuts);
 showOptions();
 showUsermemosTable();
 showBlockedUsersTable();
-ShowSavedTextsTable();
+showSavedTextsTable();
+showBookmarksTable();
+
+(function() {
+	var elements = document.getElementById("edit_shortcuts").elements;
+	
+ 	chrome.storage.local.get("shortcuts", function(items) {
+ 		var shortcuts = items.shortcuts;
+
+ 		if (shortcuts == undefined) {
+ 		    return;
+ 		}
+
+		for (var i = shortcuts.length - 1; i >= 0; i--) {
+			if (elements[i].type != "text") {
+ 			    continue;
+ 			}
+
+			elements[i].value = shortcuts[(i+1) % 10];
+		};
+	});
+})();
+
 $("#addBlockedUser").click(addBlockedUser);
 
 chrome.storage.local.get("dblclickEnable", function(items) {

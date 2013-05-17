@@ -2,8 +2,8 @@
     "manifest_version": 2,
 
     "name": "OU Tools",
-    "description": "베스트리플, 짤 선택, 글 임시저장, 당첨자 뽑기, 회원메모, IP 차단, 브금끄기, 오유 더블클릭기능 토글 등",
-    "version": "1.7.4",
+    "description": "베스트리플, 짤 선택, 글 임시저장, 오유 북마크, 오유 단축키, 일베차단, 회원메모, IP 차단, 브금끄기, 오유 더블클릭기능 토글, 당첨자뽑기 등",
+    "version": "2.0.1",
 
     "icons": {
         "16": "images/icon16.png",
@@ -39,7 +39,13 @@
         }, 
         {
             "matches": ["http://todayhumor.co.kr/*"],
-            "js": ["jquery.js", "contents/all.js"]
+            "js": ["jquery.js", "contents/all.js"],
+            "css": ["contents/all.css"]
+        },
+        {
+            "matches": ["http://*.ilbe.com/*"],
+            "js": ["jquery.js", "contents/ilbe.js"],
+            "css": ["contents/ilbe.css"]
         },
         {
             "matches": ["*://*/*"],
@@ -47,13 +53,19 @@
         }
     ],
 
+    "background": {
+        "scripts": ["jquery.js", "background.js"]
+    },
+
     "web_accessible_resources": [
         "images/xbutton.png"
     ],
 
     "permissions": [
-        "http://todayhumor.co.kr/",
-        "storage"
+        "*://*/*",
+        "storage",
+        "contextMenus",
+        "tabs"
     ],
 
     "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'"

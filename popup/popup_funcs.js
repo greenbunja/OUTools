@@ -8,6 +8,7 @@ function sendMessage(message)
 function toggleBGMs()
 {
 	chrome.storage.local.set({"offBGMs": this.checked});
+	chrome.contextMenus.update("offBGMs", {"checked": this.checked});
 	if (this.checked) {
 		sendMessage("offBGMs");	    
 	}
