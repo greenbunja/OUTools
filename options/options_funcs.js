@@ -222,7 +222,7 @@ function ShowJjalsTable() {
 		var jjals = items.jjals;
 
 		if (jjals == undefined) {
-			resetJjals();	
+			jjals = resetJjals();	
 		} else if (jjals.length == 0) {
 		    $("#JjalsTableDiv").text("짤이 없습니다.");
 		    return;
@@ -234,20 +234,28 @@ function ShowJjalsTable() {
 		var row = table.appendChild(document.createElement("thead"))
 					   .appendChild(document.createElement("tr"));
 
-		row.appendChild(document.createElement("th"))
-		   .appendChild(document.createTextNode("번호"));
-		row.appendChild(document.createElement("th"))
-		   .appendChild(document.createTextNode("짤"));
-		row.appendChild(document.createElement("th"))
-		   .appendChild(document.createTextNode("주소"));
-		row.appendChild(document.createElement("th"));
+		$(row).append("<th>번호</th>")
+			  .append("<th>짤</th>")
+			  .append("<th></th>")
+			  .append("<th>번호</th>")
+			  .append("<th>짤</th>")
+			  .append("<th></th>")
+			  .append("<th>번호</th>")
+			  .append("<th>짤</th>")
+			  .append("<th></th>");
+
+		//    .appendChild(document.createTextNode("주소"));
+		// row.appendChild(document.createElement("th"));
 
 		var tbody = table.appendChild(document.createElement("tbody"));
 
+		var row;
 		for (var i = 0; i < jjals.length ; i++) {
 			var jjal = jjals[i];
 
-			var row = tbody.appendChild(document.createElement("tr"));
+			if (i%3 == 0) {
+				row = tbody.appendChild(document.createElement("tr"));
+			}
 
 			var jjalNum = row.appendChild(document.createElement("td"))
 			   				 .appendChild(document.createElement("input"));
@@ -265,13 +273,13 @@ function ShowJjalsTable() {
 			image.src = jjal;
 			image.className = "jjal";
 			
-			var jjalURL = row.appendChild(document.createElement("td"))
-					   	     .appendChild(document.createElement("a"));
+			// var jjalURL = row.appendChild(document.createElement("td"))
+			// 		   	     .appendChild(document.createElement("a"));
 
-			jjalURL.href = jjal;
-			jjalURL.target = "_blank";
+			// jjalURL.href = jjal;
+			// jjalURL.target = "_blank";
 
-			jjalURL.appendChild(document.createTextNode(jjal));
+			// jjalURL.appendChild(document.createTextNode(jjal));
 
 			  
 			var deleteButton = row.appendChild(document.createElement("td"))
@@ -304,13 +312,10 @@ function showBookmarksTable()
 		var row = table.appendChild(document.createElement("thead"))
 					   .appendChild(document.createElement("tr"));
 
-		row.appendChild(document.createElement("th"))
-		   .appendChild(document.createTextNode("번호"));
-		row.appendChild(document.createElement("th"))
-		   .appendChild(document.createTextNode("이름"));
-		row.appendChild(document.createElement("th"))
-		   .appendChild(document.createTextNode("주소"));
-		row.appendChild(document.createElement("th"));
+		$(row).append("<th>번호</th>")
+			  .append("<th>이름</th>")
+			  .append("<th>주소</th>")
+			  .append("<th></th>");
 
 		var tbody = table.appendChild(document.createElement("tbody"));
 
@@ -327,19 +332,16 @@ function showBookmarksTable()
 			bookmarkNum.min = 1;
 			bookmarkNum.max = bookmarks.length;
 
-			row.appendChild(document.createElement("td"))
-			   .appendChild(document.createTextNode(bookmark.name));
+			$("<a></a>")
+			.text(bookmark.name)
+			.attr("href", bookmark.url)
+			.attr("target", "_blank")
+			.appendTo($('<td></td>').appendTo(row));
 
-			var urlCell = row.appendChild(document.createElement("td"))
-				    	  .appendChild(document.createElement("a"));
-
-  			urlCell.href = bookmark.url;
-			urlCell.target = "_blank";
-			if (bookmark.url.length > 80) {
-			    urlCell.appendChild(document.createTextNode(bookmark.url.slice(0, 80) + '......'));
-			} else {
-				urlCell.appendChild(document.createTextNode(bookmark.url));
-			}
+			$('<input></input>')
+			.val(bookmark.url)
+			.attr("size", "80")
+			.appendTo($('<td></td>').appendTo(row));
 
 			var deleteButton = row.appendChild(document.createElement("td"))
 			   		 	    	  .appendChild(document.createElement("a"));
@@ -517,7 +519,7 @@ function showOptions()
 {
 	chrome.storage.local.get(["AutosaveInterval", "bestReplyEnable", "blockEnable",
 							  "memoEnable", "dblclickEnable", "bookmarkEnable",
-							  "shortcutEnable", "blockIlbe"], 
+							  "shortcutEnable", "blockIlbe", "styleRemoveEnable"], 
 							  function(items) {
 		var interval = items.AutosaveInterval;
 		if (interval === undefined) {
@@ -569,6 +571,12 @@ function showOptions()
 		    blockIlbe = false;
 		}
 
+		var styleRemoveEnable = items.styleRemoveEnable;
+		if (styleRemoveEnable == undefined) {
+		    chrome.storage.local.set({"styleRemoveEnable": false});
+		    styleRemoveEnable = false;
+		}
+
 		$("#bestReplyEnable").attr("checked", bestReplyEnable);
 		$("#blockEnable").attr("checked", blockEnable);
 		$("#memoEnable").attr("checked", memoEnable);
@@ -578,6 +586,7 @@ function showOptions()
 		$("#bookmark_enable").attr("checked", bookmarkEnable);
 		$("#shortcut_enable").attr("checked", shortcutEnable);
 		$("#block_ilbe").attr("checked", blockIlbe);
+		$("#style_remove_enable").attr("checked", styleRemoveEnable);
 	});
 }
 
@@ -591,6 +600,7 @@ function saveOptions()
 	var bookmarkEnable = this.bookmark_enable.checked;
 	var shortcutEnable = this.shortcut_enable.checked;
 	var blockIlbe = this.block_ilbe.checked;
+	var styleRemoveEnable = this.style_remove_enable.checked;
 
 	chrome.storage.local.set({"AutosaveInterval": interval,
 							  "bestReplyEnable": bestReplyEnable,
@@ -599,20 +609,24 @@ function saveOptions()
 							  "dblclickEnable": dblclickEnable,
 							  "bookmarkEnable": bookmarkEnable,
 							  "shortcutEnable": shortcutEnable,
-							  "blockIlbe": blockIlbe});
+							  "blockIlbe": blockIlbe,
+							  "styleRemoveEnable": styleRemoveEnable});
 	alert("저장 되었습니다.");
 }
 
 function addJjal()
 {
-	var Jjalurl = prompt("추가할 짤의 주소를 입력해주세요.");
+	var jjalURL = prompt("추가할 짤의 주소를 입력해주세요.");
+	if (!($.trim(jjalURL))) {
+		return
+	}
 
 	chrome.storage.local.get("jjals", function(items) {
 		var jjals = items.jjals;
 		if (jjals == undefined) {
-		    jjals = [];
+		    jjals = resetJjals();
 		}
-		jjals.unshift(Jjalurl);
+		jjals.unshift(jjalURL);
 		chrome.storage.local.set({"jjals": jjals});
 
 		location.reload();
@@ -659,6 +673,15 @@ function addBookmark()
 {
 	var name = this.name.value;
 	var url = this.url.value;
+
+	if ($.trim(name) == "") {
+		alert("이름을 입력해주세요");
+		return;
+	}
+	if ($.trim(url) == "") {
+		alert("주소를 입력해주세요");
+		return;
+	}
 
 	if (url.slice(0, 4) != "http") {
 	   url = "http://" + url;
@@ -709,7 +732,7 @@ function saveJjalsNum()
 	});
 }
 
-function saveBookmarksNum()
+function saveBookmarks()
 {
 	var elements = this.elements;
 
@@ -717,17 +740,24 @@ function saveBookmarksNum()
  		var bookmarks = [];
 	 	var bookmarksCopy = items.bookmarks;
 	 	var bookmarkNumbers = [];
+
+	 	var urlIndex = 0, numIndex = 0;
 		for (var i = 0; i < elements.length; i++) {
 
-			var bookmarkNumberInput = elements[i];
+			var input = elements[i];
 			
-			if (bookmarkNumberInput.type != "number") {
-			    continue;
+			if (input.type == "text") {
+				var url = input.value;
+				if ($.trim(url) != "" && url.slice(0, 4) != "http") {
+				   url = "http://" + url;
+				}
+				bookmarksCopy[urlIndex++].url = url;
+				continue;
 			}
-
-			var bookmarkNumber = bookmarkNumberInput.value;
-
-			bookmarkNumbers.push({"i": i, "num": bookmarkNumber - 1});
+			else if (input.type == "number") {
+				var bookmarkNumber = input.value;
+				bookmarkNumbers.push({"i": numIndex++, "num": bookmarkNumber - 1});
+			}
 		}
 
 		bookmarkNumbers.sort(function(a,b){return a.num-b.num});
@@ -774,64 +804,4 @@ function saveShortcuts()
 		alert("저장 되었습니다.");
 		location.reload();
 	});
-}
-
-function resetJjals()
-{
-	var jjals = ["http://i.imgur.com/cn7QOaW.png",
-				 "http://i.imgur.com/OiBRlw9.png",
-				 "http://i.imgur.com/209M28V.png",
-				 "http://i.imgur.com/f6z4ZJb.png",
-				 "http://i.imgur.com/vFBgCih.png",
-				 "http://i.imgur.com/pHXQMOV.png",
-				 "http://i.imgur.com/keXmiA3.png",
-				 "http://i.imgur.com/j41OEnF.png",
-				 "http://i.imgur.com/rVZ6e6T.png",
-				 "http://i.imgur.com/1vS8Cds.png",
-				 "http://i.imgur.com/DVpSJdk.png",
-				 "http://i.imgur.com/whDkOfU.png",
-				 "http://i.imgur.com/f4d02yK.png",
-				 "http://i.imgur.com/OPKvJEs.png",
-				 "http://i.imgur.com/z54kM2q.png",
-				 "http://i.imgur.com/k90QIBV.png",
-				 "http://i.imgur.com/51adQbx.png",
-				 "http://i.imgur.com/Be7G3d0.png",
-				 "http://i.imgur.com/zaNVKo2.png",
-				 "http://i.imgur.com/MZpQdPD.png",
-				 "http://i.imgur.com/Q3oNbEy.png",
-				 "http://i.imgur.com/m38yL7v.png",
-				 "http://i.imgur.com/01UqUQU.png",
-				 "http://i.imgur.com/vtzKdJy.png",
-				 "http://i.imgur.com/wkaX2VL.png",
-				 "http://i.imgur.com/7lHYvqN.png",
-				 "http://i.imgur.com/8ruvQa9.png",
-				 "http://i.imgur.com/7SMhWTj.png",
-				 "http://i.imgur.com/a7d6JVC.png",
-				 "http://i.imgur.com/mJkHPTi.png",
-				 "http://i.imgur.com/JzDGrvL.png",
-				 "http://i.imgur.com/DJIqw4H.png",
-				 "http://i.imgur.com/54lSFdJ.png",
-				 "http://i.imgur.com/oCndH3h.png",
-				 "http://i.imgur.com/mjTFXoL.png",
-				 "http://i.imgur.com/KKzUkpY.png",
-				 "http://i.imgur.com/i1C0vDj.png",
-				 "http://i.imgur.com/d9Kfc4X.png",
-				 "http://i.imgur.com/SBemsD4.png",
-				 "http://i.imgur.com/XKcScn6.png",
-				 "http://i.imgur.com/pv0LySM.png",
-				 "http://i.imgur.com/rgHoQoS.png",
-				 "http://i.imgur.com/qZbIeoe.png",
-				 "http://i.imgur.com/gfXEqe9.png",
-				 "http://i.imgur.com/taSiLzk.png",
-				 "http://i.imgur.com/YB4fxcK.png",
-				 "http://i.imgur.com/5XnWfLZ.png",
-				 "http://i.imgur.com/enLoyWR.png",
-				 "http://i.imgur.com/FPCsToA.png",
-				 "http://i.imgur.com/DwLyhvU.png",
-				 "http://i.imgur.com/NQLniV9.png",
-				 "http://i.imgur.com/ZBLswRI.png",
-				 "http://i.imgur.com/hITMJDh.png",
-				 "http://i.imgur.com/gfUYqJA.png"];
-
-	chrome.storage.local.set({"jjals": jjals});
 }

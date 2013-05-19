@@ -3,7 +3,7 @@
 
     "name": "OU Tools",
     "description": "베스트리플, 짤 선택, 글 임시저장, 오유 북마크, 오유 단축키, 일베차단, 회원메모, IP 차단, 브금끄기, 오유 더블클릭기능 토글, 당첨자뽑기 등",
-    "version": "2.0.1",
+    "version": "2.1.0",
 
     "icons": {
         "16": "images/icon16.png",
@@ -25,7 +25,7 @@
     "content_scripts": [
         {
             "matches": ["http://todayhumor.co.kr/board/view.php*"],
-            "js": ["jquery.js", "contents/view.js"],
+            "js": ["jquery.js", "/functions/reset_jjals.js","contents/view.js"],
             "css": ["contents/view.css"]
         },
         {
@@ -54,7 +54,7 @@
     ],
 
     "background": {
-        "scripts": ["jquery.js", "background.js"]
+        "scripts": ["jquery.js", "/functions/reset_jjals.js", "background.js"]
     },
 
     "web_accessible_resources": [

@@ -2,7 +2,7 @@ $("#editMemos").submit(saveMemo);
 $("#editBlocked").submit(saveBlocked);
 $("#editOptions").submit(saveOptions)
 $("#add_bookmark").submit(addBookmark);
-$("#edit_bookmarks_num").submit(saveBookmarksNum)
+$("#edit_bookmarks_num").submit(saveBookmarks)
 $('#edit_shortcuts').submit(saveShortcuts);
 showOptions();
 showUsermemosTable();
