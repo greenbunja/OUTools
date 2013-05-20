@@ -309,6 +309,8 @@ function showBookmarksTable()
 
 		var table = document.getElementById("bookmarks_div").appendChild(document.createElement("table"));
 
+		table.id = "bookmarks_table";
+
 		var row = table.appendChild(document.createElement("thead"))
 					   .appendChild(document.createElement("tr"));
 
@@ -332,24 +334,24 @@ function showBookmarksTable()
 			bookmarkNum.min = 1;
 			bookmarkNum.max = bookmarks.length;
 
-			$("<a></a>")
-			.text(bookmark.name)
-			.attr("href", bookmark.url)
-			.attr("target", "_blank")
+			$('<input></input>')
+			.val(bookmark.name)
+			.attr("size", "15")
+			.addClass("bookmark_name")
 			.appendTo($('<td></td>').appendTo(row));
 
 			$('<input></input>')
 			.val(bookmark.url)
-			.attr("size", "80")
+			.attr("size", "60")
+			.addClass("bookmark_url")
 			.appendTo($('<td></td>').appendTo(row));
 
-			var deleteButton = row.appendChild(document.createElement("td"))
-			   		 	    	  .appendChild(document.createElement("a"));
-			deleteButton = $(deleteButton);
-			deleteButton.attr("href", 'javascript:;')
-						.attr("index", i)
-						.text("삭제")
-						.click(deleteBookmark);
+			$('<a></a>')
+			.attr("href", "javascript:;")
+			.attr("index", i)
+			.text("삭제")
+			.click(deleteBookmark).
+			appendTo($('<td></td>').appendTo(row));
 		}
 
 		$('<input></input>')
@@ -741,18 +743,24 @@ function saveBookmarks()
 	 	var bookmarksCopy = items.bookmarks;
 	 	var bookmarkNumbers = [];
 
-	 	var urlIndex = 0, numIndex = 0;
+	 	var nameIndex = 0, urlIndex = 0, numIndex = 0;
 		for (var i = 0; i < elements.length; i++) {
 
 			var input = elements[i];
 			
 			if (input.type == "text") {
-				var url = input.value;
-				if ($.trim(url) != "" && url.slice(0, 4) != "http") {
-				   url = "http://" + url;
+				if (input.className == "bookmark_name") {
+   					var name = input.value;
+					bookmarksCopy[nameIndex++].name = name;
+					continue; 
+				} else if(input.className == "bookmark_url") {
+					var url = input.value;
+					if ($.trim(url) != "" && url.slice(0, 4) != "http") {
+					   url = "http://" + url;
+					}
+					bookmarksCopy[urlIndex++].url = url;
+					continue;
 				}
-				bookmarksCopy[urlIndex++].url = url;
-				continue;
 			}
 			else if (input.type == "number") {
 				var bookmarkNumber = input.value;
@@ -768,38 +776,6 @@ function saveBookmarks()
 
 
 		chrome.storage.local.set({"bookmarks": bookmarks});
-
-		alert("저장 되었습니다.");
-		location.reload();
-	});
-}
-
-function saveShortcuts()
-{
-	var elements = this.elements;
-	delete elements[elements.length - 1];
-
- 	chrome.storage.local.get("shortcuts", function(items) {
- 		var shortcuts = items.shortcuts;
-
- 		if (shortcuts == undefined) {
- 		    shortcuts = [];
- 		}
-
- 		for (var i = 0; i < elements.length; i++) {
- 			if (elements[i].type != "text") {
- 			    continue;
- 			}
-
- 			var url = elements[i].value;
-			if ($.trim(url) != "" && url.slice(0, 4) != "http") {
-			   url = "http://" + url;
-			}
-
- 			shortcuts[(i+1) % 10] = url;
- 		}
-
-		chrome.storage.local.set({"shortcuts": shortcuts});
 
 		alert("저장 되었습니다.");
 		location.reload();

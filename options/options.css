@@ -1,23 +1,30 @@
+body {
+	background-color: #DDFFFF;
+}
+
 h2 {
 	font-size: 90;
 }
 
 table {
 	text-align: center;
-	border: 1px solid black;
 	border-collapse: collapse;
 }
 
 td, th {
 	padding: 5px;
-	border: 1px solid black;
+	border: 1px solid gray;
+}
+
+#shortcuts_table td, #shortcuts_table th, #bookmarks_table td, #bookmarks_table th {
+	border: 0;
 }
 
 a {
 	text-decoration: none;
 }
 
-input[type="submit"] {
+input[type="submit"], #import_options {
 	float: right;
 	clear: both;
 }
@@ -59,4 +66,9 @@ footer {
 
 #add_bookmark {
 	float: left;
+}
+
+textarea {
+	width: 500px;
+	height: 200px;
 }

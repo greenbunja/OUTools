@@ -21,6 +21,57 @@ chrome.storage.local.get("offBGMs", function(items) {
 	}});
 
 	chrome.contextMenus.create({"type": "normal",
+								"title": "오유북마크에 현재페이지 추가",
+								"contexts": ["all"],
+								"parentId": "outools",
+								"onclick": function(event, tab) {
+		var url = tab.url;
+		var name;
+		do {
+			name = prompt("북마크 이름을 입력해주세요", tab.title);
+			if (name == null) {
+			    return;
+			}
+		} while ($.trim(name) == "")
+
+		chrome.storage.local.get("bookmarks", function(items) {
+			var bookmarks = items.bookmarks;
+			if (bookmarks == undefined) {
+			    bookmarks = [];
+			}
+			bookmarks.push({"name": name, "url": url});
+			chrome.storage.local.set({"bookmarks": bookmarks});
+			alert("추가되었습니다.");
+		});
+	}});
+
+	chrome.contextMenus.create({"type": "normal",
+								"title": "오유북마크에 링크주소 추가",
+								"contexts": ["link"],
+								"parentId": "outools",
+								"onclick": function(event) {
+		var url = event.linkUrl;
+		var name;
+		do {
+			name = prompt("북마크 이름을 입력해주세요");
+
+			if (name == null) {
+			    return;
+			}
+		} while ($.trim(name) == "")
+
+		chrome.storage.local.get("bookmarks", function(items) {
+			var bookmarks = items.bookmarks;
+			if (bookmarks == undefined) {
+			    bookmarks = [];
+			}
+			bookmarks.push({"name": name, "url": url});
+			chrome.storage.local.set({"bookmarks": bookmarks});
+			alert("추가되었습니다.");
+		});
+	}});
+
+	chrome.contextMenus.create({"type": "normal",
 								"title": "당첨자 추첨",
 								"parentId": "outools",
 								"contexts": ["all"],

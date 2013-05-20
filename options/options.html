@@ -18,7 +18,8 @@
 		<a href="jjals_options.html">자주쓰는 짤 관리</a><br>
 		<a href="options.html#show_bookmarks">북마크 관리</a><br>
 		<a href="options.html#show_shortcuts">단축키 관리</a><br> 
-		<a href="options.html#misc_options">기타 설정</a>
+		<a href="options.html#misc_options">기타 설정</a><br>
+		<a href="options.html#import_export_options">옵션 내보내기/불러오기</a>
 	</div>
 
 	<section>
@@ -53,8 +54,8 @@
 
 		<form action="javascript:;" id="add_bookmark">
 			<strong>북마크 추가</strong><br>
-			<input type="text" name="name" size="10" placeholder="이름">
-			<input type="text" name="url" size="80" placeholder="주소"><br>
+			<input type="text" name="name" size="15" placeholder="이름">
+			<input type="text" name="url" size="60" placeholder="주소"><br>
 			<input type="submit" value="추가하기">
 		</form>
 	</section>
@@ -62,7 +63,7 @@
 	<section>
 		<h2 id="show_shortcuts">단축키 관리</h2>
 		<form id="edit_shortcuts" action="javascript:;">
-			<table>
+			<table id="shortcuts_table">
 				<thead>
 					<tr>
 						<th>단축키</th>
@@ -72,43 +73,43 @@
 				<tbody>
 					<tr>
 						<td>Alt + 1</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 2</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 3</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 4</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 5</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 6</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 7</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 8</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 9</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 					<tr>
 						<td>Alt + 0</td>
-						<td><input type="text" size="80"></td>
+						<td><input type="text" size="60"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -118,7 +119,7 @@
 	</section>
 
 	<section>
-		<h2 id="misc_options">기타 설정</h2>
+		<h2 id="misc_options">기타 옵션</h2>
 		<form action="javascript:;" id="editOptions" class="conf_div">
 			<input type="checkbox" id="blockEnable">
 			<label for="blockEnable">IP차단 기능 사용하기</label><br>
@@ -152,6 +153,13 @@
 
 			<input type="submit" value="저장하기"><br>
 		</form>
+	</section>
+
+	<section>
+		<h2 id="import_export_options">옵션 내보내기 / 불러오기</h2>
+		<button id="export_options">옵션 내보내기</button><br><br>
+		<textarea id="options_text" placeholder="옵션 내보내기에서 복사한 텍스트 붙여넣기"></textarea><br>
+		<button id="import_options">옵션 불러오기</button>
 	</section>
 
 	<footer>
