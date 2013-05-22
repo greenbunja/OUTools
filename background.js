@@ -102,6 +102,6 @@ chrome.storage.local.get("offBGMs", function(items) {
 								"contexts": ["all"],
 								"parentId": "outools",
 								"onclick": function(event) {
-		window.open(chrome.extension.getURL("options/options.html"), "_blank");
+		window.open("/options/options.html", "_blank");
 	}});
 });

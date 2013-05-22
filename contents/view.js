@@ -8,7 +8,7 @@ function wrapOKText()
 
 function addOKListButtonsDivs()
 {
-	$("#ok_layer > span.okSpan").each(function() {
+	$("#ok_layer > .okSpan").each(function() {
 		var $this = $(this);
 
 		var text = $(this).text();
@@ -20,7 +20,7 @@ function addOKListButtonsDivs()
 
 		var ip = $.trim(words[words.length - 3]);
 		var username = $.trim(words[words.length - 2]);
-		var usernum = $(this).nextAll("a:first").text();
+		var usernum = $(this).next("a").text();
 
 		if (username == "") {
 		    usernum = "";
@@ -32,15 +32,16 @@ function addOKListButtonsDivs()
 						  .attr("usernum", usernum)
 						  .attr("ip", ip);
 
-		if (ip != "" && username == "") {
+		var num = $(this).next("a");
+		if (num.length == 0) {
 			buttonsSpan.insertAfter($this);
 		} else {
-			buttonsSpan.insertAfter($(this).nextAll("a:first"));
+			buttonsSpan.insertAfter(num);
 		}
 	});
 }
 
-function addButtonsDivs()
+function addButtonsSpans()
 {
 	var writerDiv = $(".writerInfoContents");
 
@@ -105,34 +106,64 @@ function addMemoButton(parent)
 	$("<button></button>")
 	.attr("class", "memoButton")
 	.text("회원메모")
-	.click(writeUsermemos)
-	.appendTo(parent);
+	.appendTo(parent)
+	.click(function() {
+		var username = $(this).parent().attr("username");
+		var usernum = $(this).parent().attr("usernum");
+
+		chrome.storage.local.get("usermemos", function(items) {
+			var usermemos = items.usermemos;
+
+			if (usermemos == undefined) {
+			    usermemos = {};
+			}
+
+			var memo = prompt("메모내용을 입력해주세요.");
+
+			if ($.trim(memo) == "") {
+			    return;
+			}
+
+			usermemos[usernum] = {"username": username, "memo": memo};
+			chrome.storage.local.set({"usermemos": usermemos});
+			
+			showUsermemos(usermemos);
+		});
+	});
 }
 
-function addMemoButtons()
+function addMemoButtons(selector)
 {
-	$('.buttonsSpan').each(function() {
+	if (!selector) {
+	    selector = "";
+	}
+
+	$(selector + ' .buttonsSpan').each(function() {
 		var $this = $(this);
 
 		if ($this.children(".memoButton").length != 0) {
 		    return;
 		}
 
-		var username = $this.attr("username");
+		var usernum = $this.attr("usernum");
 
-		if (username != "") {
+		if (usernum != "") {
 			addMemoButton($this);
 		}
 	});
 }
 
-function addBlockButtons(blockedUsers)
+function addBlockButtons(blockedUsers, selector)
 {
 	if (blockedUsers == undefined) {
 	    blockedUsers = [];
 	}
 
-	$('.buttonsSpan').each(function() {
+	if (!selector) {
+	    selector = "";
+	}
+
+	$(selector + ' .buttonsSpan').each(function() {
 		var $this = $(this);
 
 		if ($this.children(".blockButton").length != 0) {
@@ -140,6 +171,7 @@ function addBlockButtons(blockedUsers)
 		}
 
 		var username = $this.attr("username");
+
 		var usernum = $this.attr("usernum");
 		var ip = $this.attr("ip");
 		ip = ip.slice(3);
@@ -154,50 +186,18 @@ function addBlockButtons(blockedUsers)
 	});
 }
 
-function clickedTotalOKButton()
-{
-	chrome.storage.local.get(["usermemos", "blockedUsers", "blockEnable", "memoEnable"], function(items) {
-		wrapOKText();
-
-		var usermemos = items.usermemos;
-		var blockedUsers = items.blockedUsers;
-		var memoEnable = items.memoEnable;
-		var blockEnable = items.blockEnable;
-
-		if (!memoEnable && !blockEnable) {
-		    return;
-		}
-
-		addOKListButtonsDivs();
-
-		if (items.memoEnable) {
-			if (usermemos != undefined) {
-	    		showOKListUsermemos(usermemos);
-			}
-			addMemoButtons();
-		}
-		if (items.blockEnable) {
-			if (blockedUsers != undefined) {
-				showOKListBlockedUsers(blockedUsers);
-			}
-
-			addBlockButtons(blockedUsers);
-		}
-	});
-}
-
 // 회원메모
 
 function showOKListUsermemos(usermemos)
 {
-	$("#ok_layer > a").each(function() {
-		var usernum = $(this).text();
+	$("#ok_layer > .okSpan").each(function() {
+		var usernum = $(this).next('a').text();
 		var usermemo = usermemos[usernum];
 		
 		if (usermemo != undefined) {
-			var memoSpan = $(this).prev("span.memoSpan");
+			var memoSpan = $(this).children("span.memoSpan");
 			if (memoSpan.length == 0) {
-			    $(this).before('<span class="memoSpan"><b>[' + usermemo.memo + ']</b></span>');
+			    $(this).append('<span class="memoSpan"><b>[' + usermemo.memo + ']</b></span>');
 			} else {
 			    memoSpan.children().text("[" + usermemo.memo + "]");
 			}
@@ -226,31 +226,6 @@ function showUsermemos(usermemos)
 	});
 
 	showOKListUsermemos(usermemos);
-}
-
-function writeUsermemos()
-{
-	var username = $(this).parent().attr("username");
-	var usernum = $(this).parent().attr("usernum");
-
-	chrome.storage.local.get("usermemos", function(items) {
-		var usermemos = items.usermemos;
-
-		if (usermemos == undefined) {
-		    usermemos = {};
-		}
-
-		var memo = prompt("메모내용을 입력해주세요.");
-
-		if ($.trim(memo) == "") {
-		    return;
-		}
-
-		usermemos[usernum] = {"username": username, "memo": memo};
-		chrome.storage.local.set({"usermemos": usermemos});
-		
-		showUsermemos(usermemos);
-	});
 }
 
 // 차단 
@@ -366,7 +341,7 @@ function showOKListBlockedUsers(blockedUsers)
 	}
 
 	$("#ok_layer > span.okSpan").each(function() {
-		var usernum = $(this).nextAll("a:first").text();
+		var usernum = $(this).next("a").text();
 
 		var text = $(this).text();
 		if ($.trim(text) == "") {
@@ -454,59 +429,6 @@ function lottery()
 		alert("당첨자: " + winner);
 }
 
-function reciveMessage(message, sender, sendResponse)
-{
-	if (message.text == "lottery") {
-		lottery();
-	} else if (message.text == "offBGMs") {
-		offBGMs();
-	}
-}
-
-// 베플
-
-function showBestReply()
-{
-	var bestReply, secondReply;
-	var maxOK = 0, secondOK = 0;
-	$('.memoInfoDiv').each(function(index) {
-		var okAndNokDiv = $(this).children('font[color="red"]');
-
-		var html = okAndNokDiv.html();
-		var okAndNokString = html.split(' / ');
-		var okCount = parseInt(okAndNokString[0].split(':')[1]);
-		var nokCount = parseInt(okAndNokString[1].split(':')[1]);
-		
-		if ((okCount >= 10) && (okCount/3 >= nokCount)) {
-			if (okCount > secondOK) {
-				if (okCount > maxOK) {
-				    secondReply = bestReply;
-				    bestReply = index;
-				    secondOK = maxOK;
-				    maxOK = okCount;
-				} else {
-					secondReply = index;
-					secondOK = okCount;
-				}
-			}
-		}
-	});
-
-	if (bestReply !== undefined) {
-		var bestReplysDiv = $("<div></div>")
-						   .attr("id", "bestReplyDiv")
-						   .insertBefore($(".memoContainerDiv:first"));
-
-		var firstReplyDiv = $('.memoContainerDiv:eq(' + bestReply + ')').clone(true, true);
-		bestReplysDiv.append(firstReplyDiv);
-
-		if (secondReply !== undefined) {
-			var secondReplyHtml = $('.memoContainerDiv:eq(' + (secondReply+1) + ')').clone(true, true);
-			bestReplysDiv.append(secondReplyHtml);	    
-		}
-	}	
-}
-
 // 짤
 function addJjal(event)
 {
@@ -522,37 +444,35 @@ function hideJjals()
 
 function offBGMs()
 {
-	(function() {
-		function R(w) {
-			try {
-				var d=w.document,j,i,t,T,N,b,r=1,C;
-				for(j=0;t=["object", "embed", "applet", "iframe", "video", "audio"][j];++j) {
-					T=d.getElementsByTagName(t);
+	function R(w) {
+		try {
+			var d=w.document,j,i,t,T,N,b,r=1,C;
+			for(j=0;t=["object", "embed", "applet", "iframe", "video", "audio"][j];++j) {
+				T=d.getElementsByTagName(t);
 
-					for(i=T.length-1;(i+1)&&(N=T[i]);--i) {
-						var parents = $(T[i]).parents(".contentContainer, #tail_layer");
-						if (parents.length == 0) {
-						    continue;
-						}
+				for(i=T.length-1;(i+1)&&(N=T[i]);--i) {
+					var parents = $(T[i]).parents(".contentContainer, #tail_layer");
+					if (parents.length == 0) {
+					    continue;
+					}
 
-						if(j!=3||!R((C=N.contentWindow)?C:N.contentDocument.defaultView)) {
-							b=d.createElement("div");
-							b.style.width=N.width;
-							b.style.height=N.height;b.innerHTML="<del>"+(j==3?"third-party "+t:t)+"</del>";
-							N.parentNode.replaceChild(b,N);
-						}
+					if(j!=3||!R((C=N.contentWindow)?C:N.contentDocument.defaultView)) {
+						b=d.createElement("div");
+						b.style.width=N.width;
+						b.style.height=N.height;b.innerHTML="<del>"+(j==3?"third-party "+t:t)+"</del>";
+						N.parentNode.replaceChild(b,N);
 					}
 				}
-			}catch(E) {
-				r=0;
 			}
-			return r
+		}catch(E) {
+			r=0;
 		}
-		R(self);
-		var i,x;
-		for(i=0;x=frames[i];++i)
-			R(x);
-	})();
+		return r
+	}
+	R(self);
+	var i,x;
+	for(i=0;x=frames[i];++i)
+		R(x);
 }
 
 (function () {
@@ -611,7 +531,7 @@ function offBGMs()
 		    return;
 		}
 
-		addButtonsDivs();
+		addButtonsSpans();
 
 		$("center > input").click(function () {
 			chrome.storage.local.get(["usermemos", "blockedUsers"], function(items) {
@@ -630,14 +550,13 @@ function offBGMs()
 					if (usermemos != undefined) {
 			    		showOKListUsermemos(usermemos);
 					}
-					addMemoButtons();
+					addMemoButtons('#ok_layer');
 				}
 				if (blockEnable) {
 					if (blockedUsers != undefined) {
 						showOKListBlockedUsers(blockedUsers);
 					}
-
-					addBlockButtons(blockedUsers);
+					addBlockButtons(blockedUsers, '#ok_layer');
 				}
 			});
 		});
@@ -672,21 +591,64 @@ function offBGMs()
 		}
 
 		if (bestReplyEnable) {
-		    showBestReply();
+	    	var bestReply, secondReply;
+			var maxOK = 0, secondOK = 0;
+			$('.memoInfoDiv').each(function(index) {
+				var okAndNokDiv = $(this).children('font[color="red"]');
+
+				var html = okAndNokDiv.html();
+				var okAndNokString = html.split(' / ');
+				var okCount = parseInt(okAndNokString[0].split(':')[1]);
+				var nokCount = parseInt(okAndNokString[1].split(':')[1]);
+				
+				if ((okCount >= 10) && (okCount/3 >= nokCount)) {
+					if (okCount > secondOK) {
+						if (okCount > maxOK) {
+						    secondReply = bestReply;
+						    bestReply = index;
+						    secondOK = maxOK;
+						    maxOK = okCount;
+						} else {
+							secondReply = index;
+							secondOK = okCount;
+						}
+					}
+				}
+			});
+
+			if (bestReply !== undefined) {
+				var bestReplysDiv = $("<div></div>")
+								   .attr("id", "bestReplyDiv")
+								   .insertBefore($(".memoContainerDiv:first"));
+
+				var firstReplyDiv = $('.memoContainerDiv:eq(' + bestReply + ')').clone(true, true);
+				bestReplysDiv.append(firstReplyDiv);
+
+				if (secondReply !== undefined) {
+					var secondReplyHtml = $('.memoContainerDiv:eq(' + (secondReply+1) + ')').clone(true, true);
+					bestReplysDiv.append(secondReplyHtml);	    
+				}
+			}	
 		}
 	}) ;
+
+	chrome.storage.local.get("offBGMs", function(items) {
+		if (items.offBGMs == true) {
+			offBGMs();	    
+		}
+	});
+
+	chrome.storage.local.get("styleRemoveEnable", function(items) {
+		if (items.styleRemoveEnable == true) {
+			$("#tail_layer style, contentContainer style").remove();
+		}
+	});
+
+	chrome.runtime.onMessage.addListener(function(message) {
+		if (message.text == "lottery") {
+			lottery();
+		} else if (message.text == "offBGMs") {
+			offBGMs();
+		}
+	});
 })();
-
-chrome.storage.local.get("offBGMs", function(items) {
-	if (items.offBGMs == true) {
-		offBGMs();	    
-	}
-});
-
-chrome.storage.local.get("styleRemoveEnable", function(items) {
-	if (items.styleRemoveEnable == true) {
-		$("#tail_layer style, contentContainer style").remove();
-	}
-});
-
-chrome.runtime.onMessage.addListener(reciveMessage);

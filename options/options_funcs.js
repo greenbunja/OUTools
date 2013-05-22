@@ -48,7 +48,20 @@ function showUsermemosTable()
 			deleteButton.attr("href", 'javascript:;')
 						.attr("usernum", usernum)
 						.text("삭제")
-						.click(deleteMemo);
+						.click(function() {
+				if (!confirm("정말로 삭제하시겠습니까?")) {
+				    return
+				}
+
+				var usernum = $(this).attr("usernum");	
+				chrome.storage.local.get("usermemos", function(items) {
+					var usermemos = items.usermemos;
+					delete usermemos[usernum];
+					chrome.storage.local.set({"usermemos": usermemos});
+
+					location.reload();
+				});
+			});
 		}
 
 		$("#editMemos").append('<input type="submit" id="saveMemo" value="변경 저장">');
@@ -155,7 +168,24 @@ function showBlockedUsersTable()
 			deleteButton.attr("href", 'javascript:;')
 						.attr("index", i)
 						.text("삭제")
-						.click(disableBlocked);
+						.click(function() {
+				if (!confirm("정말로 삭제하시겠습니까?")) {
+				    return
+				}
+
+				var index = $(this).attr("index");
+
+				chrome.storage.local.get("blockedUsers", function(items) {
+					var blockedUsers = items.blockedUsers;
+
+					delete blockedUsers[index];
+					
+
+					chrome.storage.local.set({"blockedUsers": blockedUsers});
+
+					location.reload();
+				});
+			});
 		}
 
 		$("#editBlocked").append('<input type="submit" id="saveBlocked" value="변경 저장">');
@@ -194,7 +224,16 @@ function showSavedTextsTable() {
 			var text = row.appendChild(document.createElement("td"))
 				    	  .appendChild(document.createElement("a"));
 			text.href = "javascript:;";
-			$(text).click({text: savedText.text}, openSavedTextWindow);
+			$(text).click({text: savedText.text}, function(event) {
+				var showTextWindow = window.open(null, "_blank", "width=500px, height=500px");
+				$("<textarea></textarea>")
+				.val(event.data.text)
+				.attr("autofocus", "")
+				.css("width", "100%")
+				.css("height", "100%")
+				.focus(function(){$(this).select();})
+				.appendTo(showTextWindow.document.body);
+			});
 			
 			if ($.trim(savedText.subject) == "") {
 			    savedText.subject = "[무제]";
@@ -212,7 +251,24 @@ function showSavedTextsTable() {
 			deleteButton.attr("href", 'javascript:;')
 						.attr("index", i)
 						.text("삭제")
-						.click(deleteSavedText);
+						.click(function() {
+				if (!confirm("정말로 삭제하시겠습니까?")) {
+				    return
+				}
+
+				var index = $(this).attr("index");
+
+				chrome.storage.local.get("savedTexts", function(items) {
+					var savedTexts = items.savedTexts;
+
+					delete savedTexts[index];
+					
+
+					chrome.storage.local.set({"savedTexts": savedTexts});
+
+					location.reload();
+				});			
+			});
 		}
 	});
 }
@@ -288,7 +344,24 @@ function ShowJjalsTable() {
 			deleteButton.attr("href", 'javascript:;')
 						.attr("index", i)
 						.text("삭제")
-						.click(deleteJjal);
+						.click(function() {
+				if (!confirm("정말로 삭제하시겠습니까?")) {
+				    return
+				}
+
+				var index = $(this).attr("index");
+
+				chrome.storage.local.get("jjals", function(items) {
+					var jjals = items.jjals;
+
+					delete jjals[index];
+					
+
+					chrome.storage.local.set({"jjals": jjals});
+
+					location.reload();
+				});			
+			});
 		}
 		$('<input></input>')
 		.attr("type", "submit")
@@ -350,8 +423,25 @@ function showBookmarksTable()
 			.attr("href", "javascript:;")
 			.attr("index", i)
 			.text("삭제")
-			.click(deleteBookmark).
-			appendTo($('<td></td>').appendTo(row));
+			.appendTo($('<td></td>').appendTo(row))
+			.click(function() {
+				if (!confirm("정말로 삭제하시겠습니까?")) {
+				    return
+				}
+
+				var index = $(this).attr("index");
+
+				chrome.storage.local.get("bookmarks", function(items) {
+					var bookmarks = items.bookmarks;
+
+					delete bookmarks[index];
+					
+
+					chrome.storage.local.set({"bookmarks": bookmarks});
+
+					location.reload();
+				});
+			});
 		}
 
 		$('<input></input>')
@@ -362,160 +452,6 @@ function showBookmarksTable()
 }
 
 //
-
-function saveMemo()
-{
-	var elements = this.elements;
-
- 	chrome.storage.local.get("usermemos", function(items) {
-	 	var usermemos = items.usermemos;
-		for (var i = 0; i < elements.length; i++) {
-			var memoInput = elements[i];
-			var memo = memoInput.value;
-
-			if (memoInput.type != "text") {
-			    continue;
-			}
-
-			usermemos[memoInput.name].memo = memo;
-		}
-
-		chrome.storage.local.set({"usermemos": usermemos});
-
-		alert("저장 되었습니다.");
-	});
-}
-
-function saveBlocked()
-{
-	var elements = this.elements;
-
- 	chrome.storage.local.get("blockedUsers", function(items) {
-	 	var blockedUsers = items.blockedUsers;
-		for (var i = 0; i < elements.length; i++) {
-			var memoInput = elements[i];
-			var memo = memoInput.value;
-
-			if (memoInput.type != "text") {
-			    continue;
-			}
-
-			blockedUsers[i].memo = memo;
-		}
-
-		chrome.storage.local.set({"blockedUsers": blockedUsers});
-
-		alert("저장 되었습니다.");
-	});
-}
-
-function deleteMemo()
-{
-	if (!confirm("정말로 삭제하시겠습니까?")) {
-	    return
-	}
-
-	var usernum = $(this).attr("usernum");	
-	chrome.storage.local.get("usermemos", function(items) {
-		var usermemos = items.usermemos;
-		delete usermemos[usernum];
-		chrome.storage.local.set({"usermemos": usermemos});
-
-		location.reload();
-	});
-}
-
-function disableBlocked()
-{
-	if (!confirm("정말로 삭제하시겠습니까?")) {
-	    return
-	}
-
-	var index = $(this).attr("index");
-
-	chrome.storage.local.get("blockedUsers", function(items) {
-		var blockedUsers = items.blockedUsers;
-
-		delete blockedUsers[index];
-		
-
-		chrome.storage.local.set({"blockedUsers": blockedUsers});
-
-		location.reload();
-	});
-}
-
-function deleteSavedText()
-{
-	if (!confirm("정말로 삭제하시겠습니까?")) {
-	    return
-	}
-
-	var index = $(this).attr("index");
-
-	chrome.storage.local.get("savedTexts", function(items) {
-		var savedTexts = items.savedTexts;
-
-		delete savedTexts[index];
-		
-
-		chrome.storage.local.set({"savedTexts": savedTexts});
-
-		location.reload();
-	});
-}
-
-function deleteJjal()
-{
-	if (!confirm("정말로 삭제하시겠습니까?")) {
-	    return
-	}
-
-	var index = $(this).attr("index");
-
-	chrome.storage.local.get("jjals", function(items) {
-		var jjals = items.jjals;
-
-		delete jjals[index];
-		
-
-		chrome.storage.local.set({"jjals": jjals});
-
-		location.reload();
-	});
-}
-
-function deleteBookmark()
-{
-	if (!confirm("정말로 삭제하시겠습니까?")) {
-	    return
-	}
-
-	var index = $(this).attr("index");
-
-	chrome.storage.local.get("bookmarks", function(items) {
-		var bookmarks = items.bookmarks;
-
-		delete bookmarks[index];
-		
-
-		chrome.storage.local.set({"bookmarks": bookmarks});
-
-		location.reload();
-	});
-}
-
-function openSavedTextWindow(event)
-{
-	var showTextWindow = window.open(null, "_blank", "width=500px, height=500px");
-	$("<textarea></textarea>")
-	.val(event.data.text)
-	.attr("autofocus", "")
-	.css("width", "100%")
-	.css("height", "100%")
-	.focus(function(){$(this).select();})
-	.appendTo(showTextWindow.document.body);
-}
 
 function showOptions()
 {
@@ -751,6 +687,7 @@ function saveBookmarks()
 			if (input.type == "text") {
 				if (input.className == "bookmark_name") {
    					var name = input.value;
+   					
 					bookmarksCopy[nameIndex++].name = name;
 					continue; 
 				} else if(input.className == "bookmark_url") {

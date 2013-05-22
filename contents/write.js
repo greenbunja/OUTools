@@ -26,9 +26,16 @@ function saveText()
 	});
 }
 
+$("<a></a>")
+.text("임시저장된 글 목록")
+.attr("href", chrome.extension.getURL("/options/options.html#show_savedtext"))
+.attr("target", "_blank")
+.insertAfter($("#subject"));
 
-function loadRecentSave()
-{
+$("<button></button>")
+.text("최근 저장된 글 불러오기")
+.insertAfter($("#subject"))
+.click(function() {
 	if (!confirm("불러 오시겠습니까?")) {
 	    return;
 	}
@@ -71,25 +78,7 @@ function loadRecentSave()
 		chrome.storage.local.set({"savedTexts": savedTexts});
 		alert("원래있던 글은 저장 되었습니다.");
 	});
-}
-
-function setAutosave()
-{
-	chrome.storage.local.get("AutosaveInterval", function(items) {
-		var interval = items.AutosaveInterval;
-
-		if (interval <= 0 || interval > 60) {
-		    return;
-		}
-
-		if (interval == undefined) {
-			chrome.storage.local.set({"AutosaveInterval": 3});
-		    interval = 3;
-		}
-
-		setInterval(saveText, interval * 60000);
-	});
-}
+});
 
 $("<button></button>")
 .text("임시저장 하기")
@@ -101,9 +90,19 @@ $("<button></button>")
 })
 .insertAfter($("#subject"));
 
-$("<button></button>")
-.text("최근 저장된 글 불러오기")
-.click(loadRecentSave)
-.insertAfter($("#subject"));
 
-setAutosave();
+
+chrome.storage.local.get("AutosaveInterval", function(items) {
+	var interval = items.AutosaveInterval;
+
+	if (interval <= 0 || interval > 60) {
+	    return;
+	}
+
+	if (interval == undefined) {
+		chrome.storage.local.set({"AutosaveInterval": 3});
+	    interval = 3;
+	}
+
+	setInterval(saveText, interval * 60000);
+});

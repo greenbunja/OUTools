@@ -1,5 +1,46 @@
-$("#editMemos").submit(saveMemo);
-$("#editBlocked").submit(saveBlocked);
+$("#editMemos").submit(function() {
+	var elements = this.elements;
+
+ 	chrome.storage.local.get("usermemos", function(items) {
+	 	var usermemos = items.usermemos;
+		for (var i = 0; i < elements.length; i++) {
+			var memoInput = elements[i];
+			var memo = memoInput.value;
+
+			if (memoInput.type != "text") {
+			    continue;
+			}
+
+			usermemos[memoInput.name].memo = memo;
+		}
+
+		chrome.storage.local.set({"usermemos": usermemos});
+
+		alert("저장 되었습니다.");
+	});
+});
+
+$("#editBlocked").submit(function() {
+	var elements = this.elements;
+
+ 	chrome.storage.local.get("blockedUsers", function(items) {
+	 	var blockedUsers = items.blockedUsers;
+		for (var i = 0; i < elements.length; i++) {
+			var memoInput = elements[i];
+			var memo = memoInput.value;
+
+			if (memoInput.type != "text") {
+			    continue;
+			}
+
+			blockedUsers[i].memo = memo;
+		}
+
+		chrome.storage.local.set({"blockedUsers": blockedUsers});
+
+		alert("저장 되었습니다.");
+	});
+});
 $("#editOptions").submit(saveOptions)
 $("#add_bookmark").submit(addBookmark);
 $("#edit_bookmarks_num").submit(saveBookmarks)
