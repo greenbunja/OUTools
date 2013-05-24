@@ -398,37 +398,6 @@ function showBlockedUsers(blockedUsers)
 	showOKListBlockedUsers(blockedUsers);
 }
 
-// 추첨
-
-function lottery()
-{
-		var writer = $(".writerInfoContents > div > a > font > b").text();
-
-		var commentWriters = [];
-
-		$(".memoInfoDiv > a > font > b").each(function(index) {
-			var username = this.firstChild.nodeValue;
-
-			if (username == writer) {
-				return;
-			}
-			if ($.inArray(username, commentWriters) !== -1) {
-				return;
-			}
-
-			commentWriters.unshift(username);
-		});
-
-		var winner = commentWriters[Math.floor(Math.random() * commentWriters.length)];
-
-		if (winner === undefined) {
-			alert("추첨할 사람이 없습니다.");
-			return;
-		} 
-
-		alert("당첨자: " + winner);
-}
-
 // 짤
 function addJjal(event)
 {
@@ -499,9 +468,15 @@ function offBGMs()
 
 				for (var i = 0; i < jjals.length; i++) {
 					var jjalURL = jjals[i];
-					$('<img src="' + jjalURL + '" class="jjal">')
+					$('<img></img>')
+					.attr("src", jjalURL)
+					.addClass("jjal")
 				    .appendTo(jjalsDiv)
-				    .click(addJjal)
+				    .click(function() {
+			    		var jjalURL = this.src;
+						$("textarea").val($("textarea").val() + jjalURL);
+						hideJjals();
+				    })
 				    .error(function() {
 				    	this.parentNode.removeChild(this);
 				    });
@@ -646,7 +621,31 @@ function offBGMs()
 
 	chrome.runtime.onMessage.addListener(function(message) {
 		if (message.text == "lottery") {
-			lottery();
+			var writer = $(".writerInfoContents > div > a > font > b").text();
+
+			var commentWriters = [];
+
+			$(".memoInfoDiv > a > font > b").each(function(index) {
+				var username = this.firstChild.nodeValue;
+
+				if (username == writer) {
+					return;
+				}
+				if ($.inArray(username, commentWriters) !== -1) {
+					return;
+				}
+
+				commentWriters.unshift(username);
+			});
+
+			var winner = commentWriters[Math.floor(Math.random() * commentWriters.length)];
+
+			if (winner === undefined) {
+				alert("추첨할 사람이 없습니다.");
+				return;
+			} 
+
+			alert("당첨자: " + winner);
 		} else if (message.text == "offBGMs") {
 			offBGMs();
 		}

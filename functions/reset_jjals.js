@@ -7,7 +7,7 @@ function resetJjals()
 				 "http://i.imgur.com/vFBgCih.png",
 				 "http://i.imgur.com/pHXQMOV.png",
 				 "http://i.imgur.com/keXmiA3.png",
-				 "http://i.imgur.com/j41OEnF.png",
+				 "http://i.imgur.com/LZu0BTJ.png",
 				 "http://i.imgur.com/rVZ6e6T.png",
 				 "http://i.imgur.com/1vS8Cds.png",
 				 "http://i.imgur.com/DVpSJdk.png",
