@@ -61,8 +61,8 @@ function isBlockedUser(blockedUsers, usernum)
 		    return;
 		}
 
-		$("td > a > font > b").each(function(index) {
-			var usernum = $(this).parent().parent().attr("href").split('mn=')[1];
+		$("a:has(font > b)").each(function(index) {
+			var usernum = $(this).attr("href").split('mn=')[1];
 			var usermemo = usermemos[usernum];
 
 			if (usermemo == undefined) {
@@ -71,7 +71,7 @@ function isBlockedUser(blockedUsers, usernum)
 
 			var memo = usermemo.memo;
 
-			$(this).parent().parent().after("<b>[" + memo + "]</b> ");
+			$(this).parent().prev().append("\n<b>[" + memo + "]</b>");
 		});
 	});
 })();

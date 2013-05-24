@@ -212,15 +212,26 @@ function showUsermemos(usermemos)
 	}
 
 	$("a:has(font > b)").each(function(index) {
-		var usernum = $(this).attr("href").split('mn=')[1];
+		var $this = $(this);
+		var usernum = $this.attr("href").split('mn=')[1];
 		var usermemo = usermemos[usernum];
 
 		if (usermemo != undefined) {
-			var memoSpan = $(this).next("span.memoSpan");
-			if (memoSpan.length == 0) {
-				$(this).after('<span class="memoSpan"><b>[' + usermemo.memo + ']</b></span>');
+			if ($(this).parent("td").length != 0) {
+			    var parent = $this.parent().prev();
+    			var memoSpan = parent.children("span.memoSpan");
+				if (memoSpan.length == 0) {
+					parent.append('<span class="memoSpan"><b>[' + usermemo.memo + ']</b></span>');
+				} else {
+				    memoSpan.children().text("[" + usermemo.memo + "]");
+				}
 			} else {
-			    memoSpan.children().text("[" + usermemo.memo + "]");
+				var memoSpan = $this.next("span.memoSpan");
+				if (memoSpan.length == 0) {
+					$this.after('<span class="memoSpan"><b>[' + usermemo.memo + ']</b></span>');
+				} else {
+				    memoSpan.children().text("[" + usermemo.memo + "]");
+				}
 			}
 		}
 	});
