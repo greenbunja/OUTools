@@ -120,11 +120,21 @@ function addMemoButton(parent)
 
 			var memo = prompt("메모내용을 입력해주세요.");
 
-			if ($.trim(memo) == "") {
-			    return;
+			if (memo == null) {
+				return;
 			}
 
-			usermemos[usernum] = {"username": username, "memo": memo};
+			if ($.trim(memo) == "") {
+				if (usermemos[usernum] == undefined){
+					return;
+				}
+
+			    delete usermemos[usernum];
+			    $('a[href$="' + usernum + '"] ~ .memoSpan').remove();
+			} else {
+				usermemos[usernum] = {"username": username, "memo": memo};
+			}
+
 			chrome.storage.local.set({"usermemos": usermemos});
 			
 			showUsermemos(usermemos);
