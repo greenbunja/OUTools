@@ -90,13 +90,13 @@
 		if (isBlocked) {
 			$("<button></button>")
 			.attr("class", "blockButton")
-			.text("IP 차단 헤제")
+			.text("차단해제")
 			.click(disableBlockedUser)
 			.appendTo(parent);
 		} else {
 			$("<button></button>")
 			.attr("class", "blockButton")
-			.text("IP 차단")
+			.text("차단")
 			.click(blockUser)
 			.appendTo(parent);
 		}
@@ -106,7 +106,7 @@
 	{
 		$("<button></button>")
 		.attr("class", "memoButton")
-		.text("회원메모")
+		.text("메모")
 		.appendTo(parent)
 		.click(function() {
 			var username = $(this).parent().attr("username");
@@ -298,7 +298,7 @@
 			
 			showBlockedUsers(blockedUsers);
 
-			$this.text("IP 차단 헤제")
+			$this.text("차단해제")
 				 .unbind("click", blockUser)
 				 .click(disableBlockedUser);
 		});
@@ -306,7 +306,7 @@
 
 	function disableBlockedUser()
 	{
-		if (!confirm("정말로 차단 헤제 하시겠습니까?")) {
+		if (!confirm("정말로 차단 해제 하시겠습니까?")) {
 			return;
 		} 
 
