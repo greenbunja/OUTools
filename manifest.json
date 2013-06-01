@@ -3,7 +3,7 @@
 
     "name": "OU Tools",
     "description": "베스트리플, 짤 선택, 글 임시저장, 오유 북마크, 오유 단축키, 일베차단, 회원메모, IP 차단, 브금끄기, 오유 더블클릭기능 토글, 당첨자뽑기 등",
-    "version": "2.2.8",
+    "version": "2.3.1",
 
     "icons": {
         "16": "images/icon16.png",
@@ -26,30 +26,36 @@
         {
             "matches": ["http://todayhumor.co.kr/board/view.php*"],
             "js": ["jquery.js", "/functions/reset_jjals.js","contents/view.js"],
-            "css": ["contents/view.css"]
+            "css": ["contents/view.css"],
+            "run_at": "document_end"
         },
         {
             "matches": ["http://todayhumor.co.kr/board/list.php*"],
-            "js": ["jquery.js", "contents/list.js"]
+            "js": ["jquery.js", "contents/list.js"],
+            "run_at": "document_end"
         },
         {
             "matches": ["http://todayhumor.co.kr/board/write.php*",
                         "http://todayhumor.co.kr/board/modify.php*"],
-            "js": ["jquery.js", "contents/write.js"]
+            "js": ["jquery.js", "contents/write.js"],
+            "run_at": "document_end"
         }, 
         {
             "matches": ["http://todayhumor.co.kr/*"],
             "js": ["jquery.js", "contents/all.js"],
-            "css": ["contents/all.css"]
+            "css": ["contents/all.css"],
+            "run_at": "document_end"
         },
         {
             "matches": ["http://*.ilbe.com/*"],
             "js": ["jquery.js", "contents/ilbe.js"],
-            "css": ["contents/ilbe.css"]
+            "css": ["contents/ilbe.css"],
+            "run_at": "document_end"
         },
         {
             "matches": ["*://*/*"],
-            "js": ["jquery.js", "contents/every_website.js"]
+            "js": ["jquery.js", "contents/every_website.js"],
+            "run_at": "document_end"
         }
     ],
 

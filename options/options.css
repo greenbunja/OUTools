@@ -29,6 +29,10 @@ input[type="submit"], #import_options {
 	clear: both;
 }
 
+#JjalsTableDiv {
+	clear: right;
+}
+
 section {
 	float: left;
 	clear: left;

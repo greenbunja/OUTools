@@ -26,15 +26,25 @@ function saveText()
 	});
 }
 
-(function() {
+chrome.storage.local.get("savetextEnable", function(items) {
+	var savetextEnable = items.savetextEnable;
+	if (savetextEnable == undefined) {
+	    chrome.storage.local.set({"savetextEnable": true});
+	    savetextEnable = true;
+	}
+
+	if (!savetextEnable) {
+	    return;
+	}
+
 	$("<a></a>")
-	.text("임시저장된 글 목록")
+	.text("임시저장 리스트")
 	.attr("href", chrome.extension.getURL("/options/options.html#show_savedtext"))
 	.attr("target", "_blank")
 	.insertAfter($("#subject"));
 
 	$("<button></button>")
-	.text("최근 저장글 불러오기")
+	.text("최근글 불러오기")
 	.insertAfter($("#subject"))
 	.click(function() {
 		if (!confirm("불러 오시겠습니까?")) {
@@ -82,7 +92,7 @@ function saveText()
 	});
 
 	$("<button></button>")
-	.text("임시저장 하기")
+	.text("임시저장")
 	.click(function() {
 		if (!confirm("저장 하시겠습니까?")) {
 		    return;
@@ -107,4 +117,4 @@ function saveText()
 
 		setInterval(saveText, interval * 60000);
 	});
-})();
+});

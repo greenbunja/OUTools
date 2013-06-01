@@ -1,4 +1,12 @@
 (function() {
+	function sendMessage(message)
+	{
+		chrome.tabs.getSelected(null, function(tab) {
+			chrome.tabs.sendMessage(tab.id, {text: message}, null);
+		});
+	}
+
+
 	chrome.storage.local.get("offBGMs", function(items) {
 		chrome.contextMenus.create({"type": "normal",
 		                            "title": "OU Tools",
@@ -10,16 +18,26 @@
 									"contexts": ["image"],
 									"parentId": "outools",
 									"onclick": function(event) {
-			chrome.storage.local.get("jjals", function(items) {
-				var jjals = items.jjals;
-				if (jjals == undefined) {
-				    jjals = resetJjals();
-				}
+			var addJjal = function(jjals) {
 				jjals.unshift(event.srcUrl);
 				chrome.storage.local.set({"jjals": jjals});
-				alert("추가되었습니다");
+				alert("추가되었습니다");	
+			}
+
+			chrome.storage.local.get("jjals", function(items) {
+				if (items.jjals == undefined) {
+				    resetJjals(function(jjals) {
+    					addJjal(jjals);
+				    });
+				} else {
+					addJjal(items.jjals);
+				}
 			});
 		}});
+
+		chrome.contextMenus.create({"type": "separator",
+		                            "contexts": ["all"],
+									"parentId": "outools"});
 
 		chrome.contextMenus.create({"type": "normal",
 									"title": "오유북마크에 현재페이지 추가",
@@ -72,26 +90,51 @@
 			});
 		}});
 
+		chrome.contextMenus.create({"type": "separator",
+		                            "contexts": ["all"],
+									"parentId": "outools"});
+
+		chrome.contextMenus.create({"type": "normal",
+									"title": "이글의 BGM 제거",
+									"contexts": ["all"],
+									"parentId": "outools",
+									"documentUrlPatterns": ["http://todayhumor.co.kr/board/view.php?*"],
+									"onclick": function(event) {
+			sendMessage("offBGMs");
+		}});
+
+
+		chrome.contextMenus.create({"type": "checkbox",
+									"id": "offBGMs",
+									"title": "모든글에서 BGM 자동제거",
+									"contexts": ["all"],
+									"parentId": "outools",
+									"checked": items.offBGMs,
+									"onclick": function(event) {
+			chrome.storage.local.set({"offBGMs": event.checked});
+			sendMessage("offBGMs");
+		}});
+
+		chrome.contextMenus.create({"type": "separator",
+		                            "contexts": ["all"],
+									"parentId": "outools"});
+
 		chrome.contextMenus.create({"type": "normal",
 									"title": "당첨자 추첨",
 									"parentId": "outools",
 									"contexts": ["all"],
 									"documentUrlPatterns": ["http://todayhumor.co.kr/board/view.php?*"],
 									"onclick": function() {
-			chrome.tabs.getSelected(null, function(tab) {
-				chrome.tabs.sendMessage(tab.id, {"text": "lottery"}, null);
-			});
+			sendMessage("lottery");
 		}});
 
-
-		chrome.contextMenus.create({"type": "checkbox",
-									"id": "offBGMs",
-									"title": "BGM 끄기",
-									"contexts": ["all"],
+		chrome.contextMenus.create({"type": "normal",
+									"title": "이글의 배경 없애기",
 									"parentId": "outools",
-									"checked": items.offBGMs,
-									"onclick": function(event) {
-			chrome.storage.local.set({"offBGMs": event.checked});	
+									"contexts": ["all"],
+									"documentUrlPatterns": ["http://todayhumor.co.kr/board/view.php?*"],
+									"onclick": function() {
+			sendMessage("removeStyle");
 		}});
 
 		chrome.contextMenus.create({"type": "separator",

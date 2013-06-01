@@ -53,6 +53,9 @@
 		var shortcutEnable = this.shortcut_enable.checked;
 		var blockIlbe = this.block_ilbe.checked;
 		var styleRemoveEnable = this.style_remove_enable.checked;
+		var remoconEnable = this.remocon_enable.checked;
+		var jjalsEnable = this.jjals_enable.checked;
+		var savetextEnable = this.savetext_enable.checked;
 
 		chrome.storage.local.set({"AutosaveInterval": interval,
 								  "bestReplyEnable": bestReplyEnable,
@@ -62,7 +65,10 @@
 								  "bookmarkEnable": bookmarkEnable,
 								  "shortcutEnable": shortcutEnable,
 								  "blockIlbe": blockIlbe,
-								  "styleRemoveEnable": styleRemoveEnable});
+								  "styleRemoveEnable": styleRemoveEnable,
+								  "remoconEnable": remoconEnable,
+								  "jjalsEnable": jjalsEnable,
+								  "savetextEnable": savetextEnable});
 		alert("저장 되었습니다.");
 	});
 
@@ -176,8 +182,8 @@
 	$('#export_options').click(function() {
 		chrome.storage.local.get(null, function(items) {
 			var optionsString = JSON.stringify(items);
-			var w = window.open(null, "_blank");
-			w.document.write("아래텍스트를 복사해서 텍스트파일에 저장해주세요.");
+			var w = window.open();
+			w.document.write("아래텍스트를 복사해서 텍스트파일에 저장해주세요.<br>");
 			$("<textarea></textarea>")
 			.val(optionsString)
 			.attr("autofocus", "")
@@ -207,7 +213,8 @@
 
 	chrome.storage.local.get(["AutosaveInterval", "bestReplyEnable", "blockEnable",
 							  "memoEnable", "dblclickEnable", "bookmarkEnable",
-							  "shortcutEnable", "blockIlbe", "styleRemoveEnable"], 
+							  "shortcutEnable", "blockIlbe", "styleRemoveEnable",
+							  "remoconEnable", "jjalsEnable", "savetextEnable"], 
 							  function(items) {
 		var interval = items.AutosaveInterval;
 		if (interval === undefined) {
@@ -265,6 +272,24 @@
 		    styleRemoveEnable = false;
 		}
 
+		var remoconEnable = items.remoconEnable;
+		if (remoconEnable == undefined) {
+		    chrome.storage.local.set({"remoconEnable": true});
+		    remoconEnable = true;
+		}
+
+		var jjalsEnable = items.jjalsEnable;
+		if (jjalsEnable == undefined) {
+		    chrome.storage.local.set({"jjalsEnable": true});
+		    jjalsEnable = true;
+		}
+
+		var savetextEnable = items.savetextEnable;
+		if (savetextEnable == undefined) {
+		    chrome.storage.local.set({"savetextEnable": true});
+		    savetextEnable = true;
+		}
+
 		$("#bestReplyEnable").attr("checked", bestReplyEnable);
 		$("#blockEnable").attr("checked", blockEnable);
 		$("#memoEnable").attr("checked", memoEnable);
@@ -275,6 +300,9 @@
 		$("#shortcut_enable").attr("checked", shortcutEnable);
 		$("#block_ilbe").attr("checked", blockIlbe);
 		$("#style_remove_enable").attr("checked", styleRemoveEnable);
+		$("#remocon_enable").attr("checked", remoconEnable);
+		$("#jjals_enable").attr("checked", jjalsEnable);
+		$("#savetext_enable").attr("checked", savetextEnable);
 	});
 
 	showUsermemosTable();

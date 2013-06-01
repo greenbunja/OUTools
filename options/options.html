@@ -14,12 +14,12 @@
 	<div id="navigator">
 		<a href="options.html#show_memos">회원메모 관리</a><br>
 		<a href="options.html#show_blocked">IP차단 관리</a><br>
-		<a href="options.html#show_savedtext">임시저장된 글 관리</a><br>
-		<a href="jjals_options.html">자주쓰는 짤 관리</a><br>
+		<a href="options.html#show_savedtext">임시저장 관리</a><br>
+		<a href="jjals_options.html">자주쓰는짤 관리</a><br>
 		<a href="options.html#show_bookmarks">북마크 관리</a><br>
 		<a href="options.html#show_shortcuts">단축키 관리</a><br> 
 		<a href="options.html#misc_options">기타 설정</a><br>
-		<a href="options.html#import_export_options">옵션 내보내기/불러오기</a>
+		<a href="options.html#import_export_options">설정 저장</a>
 	</div>
 
 	<section>
@@ -121,6 +121,9 @@
 	<section>
 		<h2 id="misc_options">기타 옵션</h2>
 		<form action="javascript:;" id="editOptions" class="conf_div">
+			<input type="checkbox" id="jjals_enable">
+			<label for="jjals_enable">자주쓰는짤 기능 사용하기</label><br>
+
 			<input type="checkbox" id="blockEnable">
 			<label for="blockEnable">IP차단 기능 사용하기</label><br>
 
@@ -133,8 +136,14 @@
 			<input type="checkbox" id="shortcut_enable">
 			<label for="shortcut_enable">단축키 사용하기</label><br>
 
+			<input type="checkbox" id="savetext_enable">
+			<label for="savetext_enable">글 임시저장 사용하기</label><br>
+
 			<input type="checkbox" id="bestReplyEnable">
 			<label for="bestReplyEnable">베스트리플 사용하기</label><br>
+
+			<input type="checkbox" id="remocon_enable">
+			<label for="remocon_enable">오유 리모컨 사용하기</label><br>
 
 			<input type="checkbox" id="style_remove_enable">
 			<label for="style_remove_enable">사용자 스타일태그 제거(배경, 댓글창등을 임의 바꾸는거 방지)</label><br>
