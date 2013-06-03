@@ -42,7 +42,7 @@
 		});
 	}
 
-	function addButtonsSpans()
+	function addWriterButtonsSpan()
 	{
 		var writerDiv = $(".writerInfoContents");
 
@@ -61,7 +61,10 @@
 							  .attr("ip", writerIp)
 							  .appendTo(writerDiv.children(":eq(1)"));
 		}
+	}
 
+	function addReplyButtonsSpans()
+	{
 		$(".memoInfoDiv").each(function() {
 			var $this = $(this);
 
@@ -81,7 +84,11 @@
 								  .appendTo($this);
 			}
 		});
-
+	}
+	function addButtonsSpans()
+	{
+		addWriterButtonsSpan();
+		addReplyButtonsSpans();
 		addOKListButtonsDivs();
 	}
 
@@ -166,8 +173,13 @@
 
 	function addBlockButtons(blockedUsers, selector)
 	{
-		if (blockedUsers == undefined) {
-		    blockedUsers = [];
+		if (blockedUsers == undefined || blockedUsers == null) {
+		    chrome.storage.local.get('blockedUsers', function(items) {
+		    	if (items.blockedUsers != undefined) {
+		    	    addBlockButtons(items.blockedUsers, selector);
+		    	}
+		    });
+		    return;
 		}
 
 		if (!selector) {
@@ -216,13 +228,26 @@
 		});
 	}
 
-	function showUsermemos(usermemos)
+	function showUsermemos(usermemos, parent)
 	{
+		if (usermemos == undefined || usermemos == null) {
+		    chrome.storage.local.get('usermemos', function(items) {
+		    	if (items.usermemos != undefined) {
+		    	    showUsermemos(items.usermemos, parent);
+		    	}
+		    });
+		    return;
+		}
+
 		if ($.isEmptyObject(usermemos)) {
 		    return;
 		}
 
-		$("a:has(font > b)").each(function(index) {
+		if (!parent) {
+		    parent = "";
+		}
+
+		$(parent + " a:has(font > b)").each(function(index) {
 			var $this = $(this);
 			var usernum = $this.attr("href").split('mn=')[1];
 			var usermemo = usermemos[usernum];
@@ -591,6 +616,33 @@
 					addBlockButtons(blockedUsers, '#ok_layer');
 				}
 			});
+		});
+
+		$('#moreReplyButton').click(function() {
+			if (!memoEnable && !blockEnable) {
+			    return;
+			}
+
+			var id = setInterval(function() {
+				if ($('#addedReplyDiv > .memoContainerDiv').length > 0) {
+					clearInterval(id);
+					chrome.storage.local.get(['usermemos', 'blockedUsers'], function(items) {
+						addReplyButtonsSpans();
+						if (memoEnable) {
+							if (usermemos != undefined) {
+								showUsermemos(items.usermemos, '#addedReplyDiv > .memoContainerDiv');
+							}
+						    addMemoButtons('#addedReplyDiv > .memoContainerDiv');
+						}
+						if (blockEnable) {
+							if (blockedUsers != undefined) {
+								showReplyBlockedUsers(items.blockedUsers);
+							}
+							addBlockButtons(items.blockedUsers, '#addedReplyDiv > .memoContainerDiv');
+						}
+					});
+				}
+			}, 100);
 		});
 
 		var usermemos = items.usermemos;
