@@ -65,7 +65,7 @@
 
 	function addReplyButtonsSpans()
 	{
-		$(".memoInfoDiv").each(function() {
+		$(".memoInfoDiv:not(:has(.buttonsSpan))").each(function() {
 			var $this = $(this);
 
 			var username = $this.find("a > font > b").text();
@@ -623,8 +623,15 @@
 			    return;
 			}
 
+			var i = 0;
 			var id = setInterval(function() {
-				if ($('#addedReplyDiv > .memoContainerDiv').length > 0) {
+				if ($('.noMoreReplyDiv').css('display') == 'block') {
+				    clearInterval(id);
+				}
+				if (i > 100) {
+				    clearInterval(id);
+				}
+				if ($('#addedReplyDiv > .memoContainerDiv:not(:has(.buttonsSpan))').length > 0) {
 					clearInterval(id);
 					chrome.storage.local.get(['usermemos', 'blockedUsers'], function(items) {
 						addReplyButtonsSpans();
@@ -642,6 +649,7 @@
 						}
 					});
 				}
+				i++;
 			}, 100);
 		});
 

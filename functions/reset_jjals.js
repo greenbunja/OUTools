@@ -25,6 +25,7 @@ function resetJjals(callback)
 							'http://i.imgur.com/wgao0R8.jpg', 'http://i.imgur.com/k8mB0ms.png',
 							'http://i.imgur.com/JBDnA0h.png', 'http://i.imgur.com/nc2sKjO.png',
 							'http://i.imgur.com/KKzUkpY.png', 'http://i.imgur.com/VawZh8T.png',
+							'http://i.imgur.com/vdbAZCx.png',
 							'http://i.imgur.com/i1C0vDj.png', 'http://i.imgur.com/9qwf0Fb.png',
 							'http://i.imgur.com/d9Kfc4X.png', 'http://i.imgur.com/34GAAFj.jpg',
 							'http://i.imgur.com/h0qhAT6.png', 'http://i.imgur.com/PMa6KUs.png',
@@ -36,8 +37,9 @@ function resetJjals(callback)
 							'http://i.imgur.com/YB4fxcK.png', 'http://i.imgur.com/kFAOb5m.png',
 							'http://i.imgur.com/5XnWfLZ.png', 'http://i.imgur.com/enLoyWR.png',
 							'http://i.imgur.com/KHQe86E.png', 'http://i.imgur.com/FPCsToA.png',
-							'http://i.imgur.com/3PduKPm.png',
+							'http://i.imgur.com/3PduKPm.png', 'http://i.imgur.com/ysiFQls.png',
 							'http://i.imgur.com/DwLyhvU.png', 'http://i.imgur.com/NQLniV9.png',
+							'http://i.imgur.com/sV6CoLD.png', 'http://i.imgur.com/r4aJzAF.png',
 							'http://i.imgur.com/ZBLswRI.png', 'http://i.imgur.com/hITMJDh.png',
 							'http://i.imgur.com/gfUYqJA.png', 'http://i.imgur.com/mrpAO0c.png',
 							'http://i.imgur.com/SrIXRcM.png'];
