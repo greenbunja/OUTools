@@ -2,11 +2,13 @@ function saveText()
 {
 	chrome.storage.local.get("savedTexts", function(items) {
 		var subject = $("#subject").val();
-		if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
-		    var text = $("#tx_canvas_wysiwyg").contents().find("body").html();
-		} else {
-			var text =  $("#tx_canvas_source").val();
-		}
+		// if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
+		//     var text = $("#tx_canvas_wysiwyg").contents().find("body").html();
+		// } else {
+		// 	var text =  $("#tx_canvas_source").val();
+		// }
+
+		var text = $(".cheditor-editarea").contents().find("body").html();
 
 		var savedTexts = items.savedTexts;
 
@@ -61,11 +63,13 @@ chrome.storage.local.get("savetextEnable", function(items) {
 			
 			var subject = $("#subject").val();
 
-			if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
-			    var text = $("#tx_canvas_wysiwyg").contents().find("body").html();
-			} else {
-				var text =  $("#tx_canvas_source").val();
-			}
+			// if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
+			//     var text = $("#tx_canvas_wysiwyg").contents().find("body").html();
+			// } else {
+			// 	var text =  $("#tx_canvas_source").val();
+			// }
+
+			var text = $(".cheditor-editarea").contents().find("body").html();
 			
 			var now = new Date();
 			var nowString = now.getFullYear().toString() + '.' +
@@ -78,11 +82,13 @@ chrome.storage.local.get("savetextEnable", function(items) {
 
 			$("#subject").val(savedText.subject);
 
-			if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
-			    $("#tx_canvas_wysiwyg").contents().find("body").html(savedText.text);
-			} else {
-				$("#tx_canvas_source").val(savedText.text);
-			}
+			// if ($("#tx_canvas_wysiwyg_holder").css("display") == "block") {
+			//     $("#tx_canvas_wysiwyg").contents().find("body").html(savedText.text);
+			// } else {
+			// 	$("#tx_canvas_source").val(savedText.text);
+			// }
+
+			$(".cheditor-editarea").contents().find("body").html(savedText.text);
 			
 			
 			savedTexts.unshift({"subject": subject, "text": text, "date": nowString});
